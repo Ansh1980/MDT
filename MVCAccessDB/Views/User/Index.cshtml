@@ -1,0 +1,71 @@
+﻿@model IEnumerable<MDTWeb.Models.UserModel>
+
+@{
+    ViewBag.Title = "Patients";
+}
+<div class="row">
+    <div class="col-md-2" style="margin-top:20px">
+        <div class="vertical-menu">
+            <a href="#" class="active">Main Menu</a>
+            @Html.ActionLink("Patients", "Index", "Patient")
+            @Html.ActionLink("User", "Index", "User")
+            @Html.ActionLink("Logout", "Index", "Home")
+
+        </div>
+
+    </div>
+    <div class="col-md-10" style="text-align: left;">
+        <h3 style="color:#003366">Users</h3>
+
+        <p>
+            @*@Html.ActionLink("Add New Patient", "Create")*@
+            <button class="btn btn-primary pull-left" style="background-color:#003366" onclick="location.href='@Url.Action("Create", "User")'">Add New User</button>
+        </p>
+
+        @*<div style="padding-top:20px"> <span style="padding-top:20px"></span></div>*@
+
+        <table class="table" style="padding-top:20px">
+            <tr>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Lastname)
+                </th>
+                @*<th>
+                    @Html.DisplayNameFor(model => model.UserName)
+                </th>*@
+                <th>
+                    User Actions
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Lastname)
+                    </td>
+                    @*<td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>*@
+
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.UserId }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.UserId }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.UserId })
+                    </td>
+                </tr>
+            }
+
+        </table>
+        <div></div>
+
+    </div>
+</div>

@@ -1,0 +1,132 @@
+﻿@model IEnumerable<MDTWeb.Models.PatientModel>
+
+@{
+    ViewBag.Title = "Patients";
+}
+<div class="row">
+    <div class="col-md-2" style="margin-top:20px">
+        <div class="vertical-menu">
+            <a href="#" class="active">Main Menu</a>
+            @Html.ActionLink("Patients", "Index", "Patient")
+            @Html.ActionLink("User", "Index", "User")
+            @Html.ActionLink("Logout", "Index", "Home")
+
+        </div>
+
+    </div>
+    <div class="col-md-10" style="text-align: left;">
+        <h3 style="color:#003366">Patients</h3>
+
+        @using (@Html.BeginForm("Filter", "Patient"))
+        {
+
+            <div class="container">
+                <div class="row">
+                    <div id="filter-panel" class="filter-panel">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div>
+                                    <div class="col-sm-3">
+                                        @Html.TextBox("txtFilter", "", new { placeholder = "Name, NHS No, Hospital No", @class = "form-control input-sm" })
+                                    </div>
+                                    @*<div class="col-sm-3">
+                                            @*<label class="filter-col" style="margin-right: 0;" for="pref-search">Location:</label>
+                                            @Html.DropDownListFor(x => x.CategoryId, Model.CategoryList, "Select a location", new { @class = "form-control input-sm " })
+                                        </div>
+                                        <div class="col-sm-3">
+
+                                            @Html.DropDownListFor(x => x.CategoryId, Model.CategoryList, "Select a category", new { @class = "form-control input-sm" })
+                                        </div>*@
+                                    <div class="col-sm-3">
+                                        <input style="text-align: left; background-color:#003366" class="btn btn-primary pull-left" type="submit" value="Search" />
+
+                                    </div>
+                                </div>
+                                @*///form*@
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+
+        <p>
+            @*@Html.ActionLink("Add New Patient", "Create")*@
+            <button class="btn btn-primary pull-left" style="background-color:#003366" onclick="location.href='@Url.Action("Create", "Patient")'">Add New Patient</button>
+        </p>
+
+        @*<div style="padding-top:20px"> <span style="padding-top:20px"></span></div>*@
+
+        <table class="table" style="padding-top:20px">
+            <tr>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NhsNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.HospitalNo)
+                </th>
+                <th>
+                    Add MDT Episode
+                </th>
+                <th>
+                    View MDT Episode
+                </th>
+                <th>
+                    Patient Details
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NhsNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.HospitalNo)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Add Episode", "Create", "MDT", new { id = item.PatientId }, null)
+                    </td>
+                    <td>
+                        @if (item.MDTEpisode != null && item.MDTEpisode.Count > 0)
+                        {
+                            foreach (var mdt in item.MDTEpisode)
+                            {
+                                <p>
+                                    @Html.ActionLink("Episode " + mdt.MDTDate.ToShortDateString(), "Details", "MDT", new { id = mdt.MDTId }, null) <span>|</span>
+                                    @Html.ActionLink("Delete Episode", "Delete", "MDT", new { id = mdt.MDTId }, null)
+                                </p>
+                            }
+
+                        }
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.PatientId }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.PatientId }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.PatientId })
+                    </td>
+                </tr>
+            }
+
+        </table>
+        <div></div>
+
+    </div>
+</div>

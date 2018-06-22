@@ -1,0 +1,219 @@
+﻿@model MDTWeb.Models.MDTModel
+@{
+    ViewBag.Title = "Add MDT Epsiode";
+}
+<!-- jQuery UI CSS Reference -->
+<!-- Required jQuery and jQuery UI Javascript references -->
+@*<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>*@
+
+@*<div class="container">*@
+<div class="row">
+    <div class="col-sm-2" style="margin-top:20px">
+        <div class="vertical-menu">
+            <a href="#" class="active">Main Menu</a>
+            @Html.ActionLink("Patients", "Index", "Patient")
+            @Html.ActionLink("User", "Index", "User")
+            @Html.ActionLink("Logout", "Index", "Home")
+
+        </div>
+
+
+        <div class="vertical-menu" style="margin-top:20px">
+            <a href="#" class="active">Episode Menu</a>
+            @if (Model.MDTEpisode != null && Model.MDTEpisode.Count > 0)
+            {
+                foreach (var mdt in Model.MDTEpisode)
+                {
+
+                    @Html.ActionLink("Episode " + mdt.MDTDate.ToShortDateString(), "Details", "MDT", new { id = mdt.MDTId }, null)
+
+                }
+
+            }
+
+        </div>
+
+
+        <div class="vertical-menu" style="margin-top:20px">
+            <a href="#" class="active">Attendees  @DateTime.Now.ToShortDateString()</a>
+            <input type="checkbox" name="user" value="1" style="padding-left:10px">Vivek Srivastava<br>
+            <input type="checkbox" name="user" value="2" style="padding-left:10px">Shakil
+
+        </div>
+    </div>
+    <div class="col-sm-10" style="text-align: left;">
+
+
+        <h3 style="color:#003366">@Model.Patient.FirstName @Model.Patient.LastName</h3>
+        <div class="card">
+            <div class="header">
+                <div class="row">
+                    <div class="col-md-4"><div class="col-md-6"><b>Hospital No: </b></div><div class="col-md-6">@Model.Patient.HospitalNo</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b>Date Of Birth: </b></div><div class="col-md-6">@Model.Patient.DateofBirth.ToShortDateString()</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b>GP Name: </b></div><div class="col-md-6">@Model.Patient.GpName</div></div>
+                </div>
+                <div class="row" style="padding-top:10px">
+                    <div class="col-md-4"><div class="col-md-6"><b>NHS No: </b></div><div class="col-md-6">@Model.Patient.NhsNo</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b>Address: </b></div><div class="col-md-6">@Model.Patient.AddressLine1</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b>GP Address: </b></div><div class="col-md-6">@Model.Patient.GpAddressLine1</div></div>
+
+                </div>
+                <div class="row" style="padding-top:10px">
+                    <div class="col-md-4"><div class="col-md-6"><b>First Name: </b></div><div class="col-md-6">@Model.Patient.FirstName</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b> </b></div><div class="col-md-6">@Model.Patient.AddressLine2 @Model.Patient.City</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b></b></div><div class="col-md-6">@Model.Patient.GpAddressLine2 @Model.Patient.GpCity</div></div>
+                </div>
+                <div class="row" style="padding-top:10px">
+                    <div class="col-md-4"><div class="col-md-6"><b>Surname: </b></div><div class="col-md-6">@Model.Patient.LastName</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b>Postcode: </b></div><div class="col-md-6">@Model.Patient.Postcode</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b>Postcode: </b></div><div class="col-md-6">@Model.Patient.GpPostcode</div></div>
+                </div>
+            </div>
+        </div>
+
+        @*<div class="row">
+            <div class="col-md-4"><div class="col-md-6"><b>Hospital No: </b></div><div class="col-md-6">@Model.Patient.HospitalNo</div></div>
+            <div class="col-md-4"><div class="col-md-6"><b>Date Of Birth: </b></div><div class="col-md-6">@Model.Patient.DateofBirth.ToShortDateString()</div></div>
+            <div class="col-md-4"><div class="col-md-6"><b>GP Name: </b></div><div class="col-md-6">@Model.Patient.GpName</div></div>
+        </div>
+        <div class="row">
+            <div class="col-md-4"><div class="col-md-6"><b>NHS No: </b></div><div class="col-md-6">@Model.Patient.NhsNo</div></div>
+            <div class="col-md-4"><div class="col-md-6"><b>Address: </b></div><div class="col-md-6">@Model.Patient.AddressLine1</div></div>
+            <div class="col-md-4"><div class="col-md-6"><b>GP Address: </b></div><div class="col-md-6">@Model.Patient.GpAddressLine1</div></div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-4"><div class="col-md-6"><b>First Name: </b></div><div class="col-md-6">@Model.Patient.FirstName</div></div>
+            <div class="col-md-4"><div class="col-md-6"><b> </b></div><div class="col-md-6">@Model.Patient.AddressLine2 @Model.Patient.City</div></div>
+            <div class="col-md-4"><div class="col-md-6"><b></b></div><div class="col-md-6">@Model.Patient.GpAddressLine2 @Model.Patient.GpAddressLine2</div></div>
+        </div>
+        <div class="row">
+            <div class="col-md-4"><div class="col-md-6"><b>Surname: </b></div><div class="col-md-6">@Model.Patient.LastName</div></div>
+            <div class="col-md-4"><div class="col-md-6"><b>Postcode: </b></div><div class="col-md-6">@Model.Patient.Postcode</div></div>
+            <div class="col-md-4"><div class="col-md-6"><b>Postcode: </b></div><div class="col-md-6">@Model.Patient.GpPostcode</div></div>
+        </div>*@
+
+        <h3 style="color:#003366">Add MDT Episode</h3>
+        @using (Html.BeginForm("Create", "MDT", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a href="#tab_1" data-toggle="tab">Tab Header 1</a>
+                </li>
+                <li>
+                    <a href="#tab_2" data-toggle="tab">Tab Header 2</a>
+                </li>
+                <li>
+                    <a href="#tab_3" data-toggle="tab">Tab Header 3</a>
+                </li>
+            </ul>
+            <div class="form-horizontal">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab_1">
+
+                        @Html.HiddenFor(model => model.MDTPatientId, Model.Patient.PatientId)
+                        <hr />
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MDTDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+
+                                @Html.EditorFor(model => model.MDTDate, new { htmlAttributes = new { @class = "date-picker" } })
+                                @Html.ValidationMessageFor(model => model.MDTDate, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="tab_2">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.History, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.History, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.History, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Comorbidities, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Comorbidities, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Comorbidities, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="tab_3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MDTDiscussion, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.MDTDiscussion, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.MDTDiscussion, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input style="text-align: left; background-color:#003366"  type="submit" value="Add" class="btn btn-primary pull-left" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @*<div class="form-horizontal">
+
+                @Html.HiddenFor(model => model.MDTPatientId, Model.Patient.PatientId)
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MDTDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+
+                        @Html.EditorFor(model => model.MDTDate, new { htmlAttributes = new { @class = "date-picker" } })
+                        @Html.ValidationMessageFor(model => model.MDTDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.History, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.History, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.History, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Comorbidities, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Comorbidities, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Comorbidities, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MDTDiscussion, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.MDTDiscussion, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.MDTDiscussion, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Create" class="btn btn-default" />
+                    </div>
+                </div>
+            </div>*@
+        }
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(function () {
+            // This will make every element with the class "date-picker" into a DatePicker element
+            $("#MDTDate").datepicker('setDate', new Date());
+        })
+    });
+</script>

@@ -1,0 +1,126 @@
+﻿@model MDTWeb.Models.MDTModel
+@{
+    ViewBag.Title = "Patient Details";
+}
+<!-- jQuery UI CSS Reference -->
+<!-- Required jQuery and jQuery UI Javascript references -->
+@*<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>*@
+@*<div class="container">*@
+    <div class="row">
+        <div class="col-md-2" style="margin-top:20px">
+            <div class="vertical-menu">
+                <a href="#" class="active">Main Menu</a>
+                @Html.ActionLink("Patients", "Index", "Patient")
+                @Html.ActionLink("User", "Index", "User")
+                @Html.ActionLink("Logout", "Index", "Home")
+
+            </div>
+
+
+            <div class="vertical-menu" style="margin-top:20px">
+                <a href="#" class="active">Episode Menu</a>
+                @*@Html.ActionLink("View all episodes", "Index", "Patient")*@
+                @if (Model.MDTEpisode != null && Model.MDTEpisode.Count > 0)
+                {
+                    foreach (var mdt in Model.MDTEpisode)
+                    {
+                      
+                       @Html.ActionLink("Episode " + mdt.MDTDate.ToShortDateString(), "Details", "MDT", new { id = mdt.MDTId }, null) 
+                       
+                    }
+
+                }
+            </div>
+
+
+            <div class="vertical-menu" style="margin-top:20px">
+                <a href="#" class="active">Attendees  @DateTime.Now.ToShortDateString()</a>
+                <input type="checkbox" name="user" value="1" style="padding-left:10px">Vivek Srivastava<br>
+                <input type="checkbox" name="user" value="2" style="padding-left:10px">Shakil
+
+            </div>
+        </div>
+        <div class="col-md-10" style="text-align: left;">
+            <h3 style="color:#003366">@Model.Patient.FirstName @Model.Patient.LastName</h3>
+            <div class="card">
+                <div class="header">
+                    <div class="row">
+                        <div class="col-md-4"><div class="col-md-6"><b>Hospital No: </b></div><div class="col-md-6">@Model.Patient.HospitalNo</div></div>
+                        <div class="col-md-4"><div class="col-md-6"><b>Date Of Birth: </b></div><div class="col-md-6">@Model.Patient.DateofBirth.ToShortDateString()</div></div>
+                        <div class="col-md-4"><div class="col-md-6"><b>GP Name: </b></div><div class="col-md-6">@Model.Patient.GpName</div></div>
+                    </div>
+                    <div class="row" style="padding-top:10px">
+                        <div class="col-md-4"><div class="col-md-6"><b>NHS No: </b></div><div class="col-md-6">@Model.Patient.NhsNo</div></div>
+                        <div class="col-md-4"><div class="col-md-6"><b>Address: </b></div><div class="col-md-6">@Model.Patient.AddressLine1</div></div>
+                        <div class="col-md-4"><div class="col-md-6"><b>GP Address: </b></div><div class="col-md-6">@Model.Patient.GpAddressLine1</div></div>
+
+                    </div>
+                    <div class="row" style="padding-top:10px">
+                        <div class="col-md-4"><div class="col-md-6"><b>First Name: </b></div><div class="col-md-6">@Model.Patient.FirstName</div></div>
+                        <div class="col-md-4"><div class="col-md-6"><b> </b></div><div class="col-md-6">@Model.Patient.AddressLine2 @Model.Patient.City</div></div>
+                        <div class="col-md-4"><div class="col-md-6"><b></b></div><div class="col-md-6">@Model.Patient.GpAddressLine2 @Model.Patient.GpCity</div></div>
+                    </div>
+                    <div class="row" style="padding-top:10px">
+                        <div class="col-md-4"><div class="col-md-6"><b>Surname: </b></div><div class="col-md-6">@Model.Patient.LastName</div></div>
+                        <div class="col-md-4"><div class="col-md-6"><b>Postcode: </b></div><div class="col-md-6">@Model.Patient.Postcode</div></div>
+                        <div class="col-md-4"><div class="col-md-6"><b>Postcode: </b></div><div class="col-md-6">@Model.Patient.GpPostcode</div></div>
+                    </div>
+                </div>
+            </div>
+                @*<div class="container" style="margin-top:20px;padding:15px">*@
+                @*<div class="row">
+                    <div class="col-md-4"><div class="col-md-6"><b>Hospital No: </b></div><div class="col-md-6">@Model.Patient.HospitalNo</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b>Date Of Birth: </b></div><div class="col-md-6">@Model.Patient.DateofBirth.ToShortDateString()</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b>GP Name: </b></div><div class="col-md-6">@Model.Patient.GpName</div></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><div class="col-md-6"><b>NHS No: </b></div><div class="col-md-6">@Model.Patient.NhsNo</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b>Address: </b></div><div class="col-md-6">@Model.Patient.AddressLine1</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b>GP Address: </b></div><div class="col-md-6">@Model.Patient.GpAddressLine1</div></div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><div class="col-md-6"><b>First Name: </b></div><div class="col-md-6">@Model.Patient.FirstName</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b> </b></div><div class="col-md-6">@Model.Patient.AddressLine2 @Model.Patient.City</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b></b></div><div class="col-md-6">@Model.Patient.GpAddressLine2 @Model.Patient.GpAddressLine2</div></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><div class="col-md-6"><b>Surname: </b></div><div class="col-md-6">@Model.Patient.LastName</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b>Postcode: </b></div><div class="col-md-6">@Model.Patient.Postcode</div></div>
+                    <div class="col-md-4"><div class="col-md-6"><b>Postcode: </b></div><div class="col-md-6">@Model.Patient.GpPostcode</div></div>
+                </div>*@
+                @*</div>*@
+                @*@Html.ActionLink("Add Episode", "Create", "MDT", new { id = Model.Patient.PatientId }, null)
+            <button class="btn btn-primary pull-left" style="background-color:#003366" onclick="location.href='@Url.Action("Create", "MDT" , new { id = Model.Patient.PatientId })'">Add New Episode</button>*@
+                <div style="margin-top:20px;margin-bottom:10px">
+                 <h3 style="color:#003366">Episode  @Model.MDTDate.ToShortDateString() </h3>
+                 </div>
+
+                @*<div class="container" style="padding:15px;">*@
+                <div class="row" style="padding-top:10px">
+                    <div class="col-md-6" ><div class="col-md-6"><b>MDT Date: </b></div><div class="col-md-6">@Model.MDTDate.ToShortDateString()</div></div>
+                    <div class="col-md-6"><div class="col-md-6"><b>Other: </b></div><div></div></div>
+                </div>
+                <div class="row" style="padding-top:10px">
+                    <div class="col-md-6"><div class="col-md-6"><b>History: </b></div><div class="col-md-6">@Model.History</div></div>
+                    <div class="col-md-6"><div class="col-md-6"><b>Other: </b></div><div class="col-md-6"></div></div>
+
+
+                </div>
+                <div class="row" style="padding-top:10px">
+                    <div class="col-md-6"><div class="col-md-6"><b>MDT Discussion: </b></div><div class="col-md-6">@Model.MDTDiscussion</div></div>
+                    <div class="col-md-6"><div class="col-md-6"><b>Other: </b></div><div class="col-md-6"></div></div>
+
+                </div>
+                <div class="row" style="padding-top:10px">
+                    <div class="col-md-6"><div class="col-md-6"><b>Comorbidities: </b></div><div class="col-md-6">@Model.Comorbidities</div></div>
+                    <div class="col-md-6"><div class="col-md-6"><b>Other: </b></div><div class="col-md-6"></div></div>
+
+                </div>
+
+            </div>
+            @*</div>*@
+        </div>
+@*</div>*@
