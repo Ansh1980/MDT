@@ -5,7 +5,7 @@ using System.Web;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace MDTWeb.Models
+namespace MVCAccessDB.Models
 {
     public class MDTModel
     {

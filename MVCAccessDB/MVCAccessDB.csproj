@@ -146,7 +146,6 @@
     <Compile Include="Controllers\MDTController.cs" />
     <Compile Include="Controllers\MDTModel.cs" />
     <Compile Include="Controllers\PatientController.cs" />
-    <Compile Include="Controllers\PatientModel.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
