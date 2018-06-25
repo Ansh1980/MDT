@@ -16,13 +16,14 @@ namespace MVCAccessDB.Controllers
         // GET: User
         public ActionResult Index()
         {
+            ///////test
             //using (OleDbConnection dbc = new OleDbConnection(ConfigurationManager.AppSettings["connectionString"]))
             //{
             //    using (OleDbCommand cmd = dbc.CreateCommand())
             //    {
-            //        cmd.CommandText = "select * from [user]";
-            //        adapter = new OleDbDataAdapter(cmd);
-            //      //  builder = new OleDbCommandBuilder(adapter);
+            //        //cmd.CommandText = "select * from [user]";
+            //        //adapter = new OleDbDataAdapter(cmd);
+            //        //  builder = new OleDbCommandBuilder(adapter);
             //        DataSet ds = new DataSet("UserDataSet");
             //        // tempDs = new DataSet("TempDataSet");
 
@@ -31,7 +32,7 @@ namespace MVCAccessDB.Controllers
             //        //tempDs.Clear();
             //        //tempDs.Dispose();
             //        adapter.Fill(ds);
-            OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\ashrivastava\\documents\\test.accdb");
+                    OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
 
             myConnection.Open();
 
@@ -48,18 +49,19 @@ namespace MVCAccessDB.Controllers
             //tempDs.Dispose();
             adapter.Fill(ds);
             IList<UserModel> users = new List<UserModel>();
+            var userlist = ds.Tables[0];
             // var userList = db.Users.ToList();
-            //foreach (var user in ds.)
-            //{
-            //    users.Add(new UserModel
-            //    {
-            //        FirstName = user.FirstName,
-            //        Lastname = user.Lastname,
-            //        UserId = user.UserId,
-            //        UserName = user.UserName
+            foreach (DataRow user in userlist.Rows)
+            {
+                users.Add(new UserModel
+                {
+                    FirstName = user[1].ToString(),
+                    Lastname = user[2].ToString(),
+                    UserId = Convert.ToInt32(user[0].ToString()),
+                   // IsActive = user.UserName
 
-            //    });
-            //}
+                });
+            }
             myConnection.Close();
                     return View(users);
                // }
@@ -89,37 +91,51 @@ namespace MVCAccessDB.Controllers
             return View(model);
         }
 
-        //[HttpPost]
-        //public ActionResult Create(UserModel model)//FormCollection collection)
-        //{
-        //    try
-        //    {
+        [HttpPost]
+        public ActionResult Create(UserModel model)//FormCollection collection)
+        {
+            try
+            {
+                OleDbConnection conn = new OleDbConnection();
+                conn.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb";
 
-        //        using (var db = new MyDbContext("Name=MDTDbConn"))
-        //        {
-        //            var mdt = db.Set<User>();
+                String Firstname = "Ansh";
+                String lastname = "Shri";
 
-        //            mdt.Add(new User
-        //            {
-        //                DateCreated = DateTime.Now,
-        //                FirstName = model.FirstName,
-        //                Lastname = model.Lastname,
-        //                IsAdmin = model.IsAdmin,
-        //                UserName = "admin",
-        //                Password = "admin",
-        //                RowGuid = Guid.NewGuid()
+                OleDbCommand cmd = new OleDbCommand("INSERT into [user] (Firstname, Lastname) Values(@Firstname, @Lastname)");
+                cmd.Connection = conn;
 
-        //            });
+                conn.Open();
 
-        //            db.SaveChanges();
+                if (conn.State == ConnectionState.Open)
+                {
+                    cmd.Parameters.Add("@Firstname", OleDbType.VarChar).Value = Firstname;
+                    cmd.Parameters.Add("@Lastname", OleDbType.VarChar).Value = lastname;
 
-        //        };
-        //        return View("Index", model);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return View();
-        //    }
-        //}
+                    try
+                    {
+                        cmd.ExecuteNonQuery();
+                        //  MessageBox.Show("Data Added");
+                        conn.Close();
+                    }
+                    catch (OleDbException ex)
+                    {
+                        string str = ex.ToString();
+                        conn.Close();
+                    }
+                }
+                else
+                {
+                    //  MessageBox.Show("Connection Failed");
+                }
+                
+                
+                return View("Index", model);
+            }
+            catch (Exception ex)
+            {
+                return View();
+            }
+        }
     }
 }

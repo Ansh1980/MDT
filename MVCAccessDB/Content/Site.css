@@ -22,3 +22,18 @@ select,
 textarea {
     max-width: 280px;
 }
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+.navbar-inverse {
+    background-color: #003366 !important; /*#003366*/
+}
+
+    .navbar-inverse .navbar-brand {
+        color: #ffffff;
+    }

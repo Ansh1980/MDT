@@ -6,37 +6,191 @@
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <link href="@Url.Content("~/Content/themes/base/jquery-ui.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-3.3.1.js")"></script>
+    <script src="@Url.Content("~/Scripts/jquery-ui-1.12.1.js")"></script>
+    @*<script src="~/Scripts/jquery-3.3.1.js"></script>
+        <script src="~/Scripts/jquery-ui-1.12.1.js"></script>*@
+    <script type="text/javascript">
+        jQuery(function () {
+            // This will make every element with the class "date-picker" into a DatePicker element
+            $('.date-picker').datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true
+            });
+        })
+    </script>
+    <style>
+        .vertical-menu {
+            width: 190px;
+            float: left;
+        }
+
+            .vertical-menu a {
+                background-color: #eee;
+                color: black;
+                display: block;
+                padding: 12px;
+                text-decoration: none;
+            }
+
+                .vertical-menu a:hover {
+                    background-color: #ccc;
+                }
+
+                .vertical-menu a.active {
+                    background-color: #003366; /*#003366; 1c3344*/
+                    color: white;
+                }
+
+        /*div.container {
+            width: 90%;
+            border: 1px solid gray;
+        }*/
+
+        header, footer {
+            padding: 1em;
+            color: white;
+            background-color: #003366; /*black;*/
+            clear: left;
+            text-align: center;
+        }
+
+        nav {
+            float: left;
+            max-width: 210px;
+            margin: 0;
+            padding: 1em;
+        }
+
+            nav ul {
+                list-style-type: none;
+                padding: 0;
+            }
+
+                nav ul a {
+                    text-decoration: none;
+                }
+
+        article {
+            margin-left: 220px;
+            border-left: 1px solid gray;
+            padding: 1em;
+            overflow: hidden;
+        }
+
+        div.card {
+            /*width: 250px;*/
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            /*text-align: center;*/
+        }
+
+        div.header {
+            background-color: #eee;
+            color: black;
+            padding: 10px;
+            /*font-size: 40px;*/
+        }
+
+        .col {
+            flex: 1;
+            padding: 12px;
+        }
+    </style>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
+
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("Mitral MDT", "Index", "Patient", new { area = "" }, new { @class = "navbar-brand" })
+
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                </ul>
+                @*<ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Patients", "Index", "Patient")</li>
+                        <li>@Html.ActionLink("User", "Index", "User")</li>
+                    </ul>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a style="position:relative; float:right; right:15px" href="@Url.Action("Logout", "Home", null)">Logout</a>
+                    }
+                    else
+                    {
+                        <a style="position: relative; float: right; right: 15px" href="@Url.Action("Login", "Home", null)">Login</a>
+                    }*@
             </div>
+
+
         </div>
+
     </div>
+
     <div class="container body-content">
+
         @RenderBody()
+
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year - Mitral MDT</p>
         </footer>
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
+    @*@Scripts.Render("~/bundles/jquery")*@
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 </body>
 </html>
+
+
+
+
+
+@*<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>@ViewBag.Title - My ASP.NET Application</title>
+        @Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                        <li>@Html.ActionLink("About", "About", "Home")</li>
+                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container body-content">
+            @RenderBody()
+            <hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            </footer>
+        </div>
+
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+    </body>
+    </html>*@
