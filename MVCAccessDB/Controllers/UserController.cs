@@ -97,10 +97,12 @@ namespace MVCAccessDB.Controllers
             try
             {
                 OleDbConnection conn = new OleDbConnection();
-                conn.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb";
 
-                String Firstname = "Ansh";
-                String lastname = "Shri";
+                conn.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
+                    //@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb";
+
+                String Firstname = "Ansh2";
+                String lastname = "Shri2";
 
                 OleDbCommand cmd = new OleDbCommand("INSERT into [user] (Firstname, Lastname) Values(@Firstname, @Lastname)");
                 cmd.Connection = conn;
@@ -126,15 +128,15 @@ namespace MVCAccessDB.Controllers
                 }
                 else
                 {
-                    //  MessageBox.Show("Connection Failed");
+                    return View("Error");
                 }
                 
                 
-                return View("Index", model);
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                return View();
+                return View("Error");
             }
         }
     }
