@@ -89,8 +89,8 @@ namespace MVCAccessDB.Controllers
                 {
                     if (patient != null)
                     {
-                        model.Patient.FirstName = patient["FirstName"].ToString(),;
-                        model.Patient.LastName = patient["LastName"].ToString(),;
+                        model.Patient.FirstName = patient["FirstName"].ToString();
+                        model.Patient.LastName = patient["LastName"].ToString();
                         model.Patient.NhsNo = patient["NhsNo"].ToString();
                         model.Patient.PatientId = Convert.ToInt32(patient["PatientId"].ToString());
                         model.Patient.AddressLine1 = patient["AddressLine1"].ToString();
@@ -198,7 +198,7 @@ namespace MVCAccessDB.Controllers
             }
             catch (Exception ex)
             {
-               // return View("Error");
+                return RedirectToAction("Index");
             }
           
         }
@@ -252,26 +252,38 @@ namespace MVCAccessDB.Controllers
         {
 
             var filterBy = formCollection.Get("txtFilter");
-            //var filterBy2 = formCollection.Get("txtFilter2");
-            //var filterBy3 = formCollection.Get("CategoryId");
-            IList<PatientModel> patientList = new List<PatientModel>();
-            using (var db = new MyDbContext("Name=MDTDbConn"))
-            {
-                var patients = db.PatientInformations.Where(x => x.FirstName == filterBy || x.LastName == filterBy || x.NhsNo == filterBy || x.HospitalNo == filterBy).ToList();
+            OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
 
-                foreach (var patient in patients)
+            myConnection.Open();
+
+            //var datT = myConnection.GetSchema("user");
+            OleDbCommand cmd = new OleDbCommand("Select * FROM [PatientInformations] where FirstName = " + filterBy + "OR LastName= " + filterBy + "OR NhsNo= " + filterBy + "OR HospitalNo= " + filterBy, myConnection);
+            OleDbDataAdapter adapter;
+            adapter = new OleDbDataAdapter(cmd);
+
+            DataSet ds = new DataSet("MainDataSet");
+
+            adapter.Fill(ds);
+          
+          
+            IList<PatientModel> patientList = new List<PatientModel>();
+            if (ds.Tables.Count > 0)
+            {
+                var patients = ds.Tables[0];
+                foreach (DataRow patient in patients.Rows)
                 {
                     patientList.Add(new PatientModel
                     {
-                        FirstName = patient.FirstName,
-                        LastName = patient.LastName,
-                        NhsNo = patient.NhsNo,
-                        HospitalNo = patient.HospitalNo,
-                        PatientId = patient.PatientId
+                        FirstName = patient["FirstName"].ToString(),
+                        LastName = patient["LastName"].ToString(),
+                        NhsNo = patient["NhsNo"].ToString(),
+                        HospitalNo = patient["HospitalNo"].ToString(),
+                        PatientId = Convert.ToInt32(patient["PatientId"].ToString())
 
                     });
+
                 }
-            };
+            }
             return View("Index", patientList);
 
         }
