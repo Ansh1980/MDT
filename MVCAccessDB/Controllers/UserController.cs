@@ -32,12 +32,13 @@ namespace MVCAccessDB.Controllers
             //        //tempDs.Clear();
             //        //tempDs.Dispose();
             //        adapter.Fill(ds);
-                    OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
+            // OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
+            OleDbConnection myConnection = new OleDbConnection();
+            myConnection.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
 
             myConnection.Open();
-
-            //var datT = myConnection.GetSchema("user");
-            OleDbCommand cmd = new OleDbCommand("Select * FROM [user]", myConnection);
+           
+            OleDbCommand cmd = new OleDbCommand("Select * FROM [user]" , myConnection);
             adapter = new OleDbDataAdapter(cmd);
            // builder = new OleDbCommandBuilder(adapter);
             DataSet ds = new DataSet("MainDataSet");
@@ -55,10 +56,10 @@ namespace MVCAccessDB.Controllers
             {
                 users.Add(new UserModel
                 {
-                    FirstName = user[1].ToString(),
-                    Lastname = user[2].ToString(),
+                    FirstName = user["FirstName"].ToString(),
+                    Lastname = user["lastname"].ToString(),
                     UserId = Convert.ToInt32(user[0].ToString()),
-                   // IsActive = user.UserName
+                    IsActive = Convert.ToBoolean(user["IsAdmin"].ToString())
 
                 });
             }
@@ -101,18 +102,19 @@ namespace MVCAccessDB.Controllers
                 conn.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
                     //@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb";
 
-                String Firstname = "Ansh2";
-                String lastname = "Shri2";
+                //String Firstname = "Ansh2";
+                //String lastname = "Shri2";
 
-                OleDbCommand cmd = new OleDbCommand("INSERT into [user] (Firstname, Lastname) Values(@Firstname, @Lastname)");
+                OleDbCommand cmd = new OleDbCommand("INSERT into [user] (Firstname, LastName, IsAdmin) Values(@FirstName, @LastName, @IsAdmin)");
                 cmd.Connection = conn;
 
                 conn.Open();
 
                 if (conn.State == ConnectionState.Open)
                 {
-                    cmd.Parameters.Add("@Firstname", OleDbType.VarChar).Value = Firstname;
-                    cmd.Parameters.Add("@Lastname", OleDbType.VarChar).Value = lastname;
+                    cmd.Parameters.Add("@FirstName", OleDbType.VarChar).Value = model.FirstName;
+                    cmd.Parameters.Add("@LastName", OleDbType.VarChar).Value = model.Lastname;
+                    cmd.Parameters.Add("@IsAdmin", OleDbType.Boolean).Value = model.IsAdmin;
 
                     try
                     {

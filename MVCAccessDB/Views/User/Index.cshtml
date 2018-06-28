@@ -33,9 +33,9 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Lastname)
                 </th>
-                @*<th>
-                    @Html.DisplayNameFor(model => model.UserName)
-                </th>*@
+                <th>
+                    @Html.DisplayNameFor(model => model.IsAdmin)
+                </th>
                 <th>
                     User Actions
                 </th>
@@ -52,9 +52,9 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Lastname)
                     </td>
-                    @*<td>
-                        @Html.DisplayFor(modelItem => item.UserName)
-                    </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsAdmin)
+                    </td>
 
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { id = item.UserId }) |

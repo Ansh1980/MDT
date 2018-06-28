@@ -18,12 +18,15 @@ namespace MVCAccessDB.Controllers
             try
             {
                 IList<PatientModel> patients = new List<PatientModel>();
-                OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
+                OleDbConnection myConnection = new OleDbConnection();
+
+                myConnection.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
+               // OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
 
                 myConnection.Open();
 
                 //var datT = myConnection.GetSchema("user");
-                OleDbCommand cmd = new OleDbCommand("Select * FROM [PatientInformations]", myConnection);
+                OleDbCommand cmd = new OleDbCommand("Select * FROM [Patient]", myConnection);
                 OleDbDataAdapter adapter;
                 adapter = new OleDbDataAdapter(cmd);
                
@@ -87,8 +90,8 @@ namespace MVCAccessDB.Controllers
                 var patientList = ds.Tables[0];
                 foreach (DataRow patient in patientList.Rows)
                 {
-                    if (patient != null)
-                    {
+                    //if (patient != null)
+                    //{
                         model.Patient.FirstName = patient["FirstName"].ToString();
                         model.Patient.LastName = patient["LastName"].ToString();
                         model.Patient.NhsNo = patient["NhsNo"].ToString();
@@ -104,7 +107,7 @@ namespace MVCAccessDB.Controllers
                         model.Patient.GpPostcode = patient["GpPostcode"].ToString();
                         model.Patient.HospitalNo = patient["HospitalNo"].ToString();
                         model.Patient.Postcode = patient["Postcode"].ToString();
-                    }
+                   // }
                     //OleDbCommand Mdtcmd = new OleDbCommand("Select * FROM [MdtEpisodes] where Id = " + id, myConnection);
                     //OleDbDataAdapter adapter;
                     //adapter = new OleDbDataAdapter(cmd);

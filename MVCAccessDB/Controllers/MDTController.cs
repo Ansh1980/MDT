@@ -80,86 +80,168 @@ namespace MVCAccessDB.Controllers
         {
             try
             {
+                OleDbConnection conn = new OleDbConnection();
 
-                using (var db = new MyDbContext("Name=MDTDbConn"))
+                conn.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
+               
+                OleDbCommand cmd = new OleDbCommand("INSERT into [MDT] (Comorbidities, History, MDTDate, MDTDiscussion, MDTPatientId, DateCreated, Userid) Values(@Comorbidities, @History , @MDTDate, @MDTDiscussion, @MDTPatientId, @DateCreated, @UserId)");
+                cmd.Connection = conn;
+
+                conn.Open();
+
+                if (conn.State == ConnectionState.Open)
                 {
-                    Guid rowid = Guid.NewGuid();
-                    var mdt = db.Set<MdtEpisode>();
-                    mdt.Add(new MdtEpisode
+                    cmd.Parameters.Add("@Comorbidities", OleDbType.VarChar).Value = model.Comorbidities;
+                    cmd.Parameters.Add("@History", OleDbType.VarChar).Value = model.History;
+                    cmd.Parameters.Add("@MDTDate", OleDbType.VarChar).Value = model.MDTDate;
+                    cmd.Parameters.Add("@MDTDiscussion", OleDbType.VarChar).Value = model.MDTDiscussion;
+                    cmd.Parameters.Add("@MDTPatientId", OleDbType.VarChar).Value = model.MDTPatientId;
+                    cmd.Parameters.Add("@DateCreated", OleDbType.VarChar).Value = DateTime.Now;
+                    cmd.Parameters.Add("@UserId", OleDbType.VarChar).Value = 1;
+
+                    try
                     {
-                        Comorbidities = model.Comorbidities,
-                        History = model.History,
-                        MdtDate = model.MDTDate,
-                        MdtDiscussion = model.MDTDiscussion,
-                        MdtPatientId = model.MDTPatientId,
-                        RowGuid = rowid,
-                        DateCreated = DateTime.Now,
-                        UserId = 1
+                        cmd.ExecuteNonQuery();
+                        //  MessageBox.Show("Data Added");
+                        conn.Close();
+                    }
+                    catch (OleDbException ex)
+                    {
+                        string str = ex.ToString();
+                        conn.Close();
+                    }
+                }
+                else
+                {
+                    return View("Error");
+                }
 
-                    });
 
-                    db.SaveChanges();
-
-                    model.MdtId = db.MdtEpisodes.Where(x => x.RowGuid == rowid).FirstOrDefault().MdtId;
-
-                };
-                return RedirectToAction("Details", "MDT", new { id = model.MdtId });
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                return View();
+                return View("Error");
             }
+            //try
+            //{
+
+            //    using (var db = new MyDbContext("Name=MDTDbConn"))
+            //    {
+            //        Guid rowid = Guid.NewGuid();
+            //        var mdt = db.Set<MdtEpisode>();
+            //        mdt.Add(new MdtEpisode
+            //        {
+            //            Comorbidities = model.Comorbidities,
+            //            History = model.History,
+            //            MdtDate = model.MDTDate,
+            //            MdtDiscussion = model.MDTDiscussion,
+            //            MdtPatientId = model.MDTPatientId,
+            //            RowGuid = rowid,
+            //            DateCreated = DateTime.Now,
+            //            UserId = 1
+
+            //        });
+
+            //        db.SaveChanges();
+
+            //        model.MdtId = db.MdtEpisodes.Where(x => x.RowGuid == rowid).FirstOrDefault().MdtId;
+
+            //    };
+            //    return RedirectToAction("Details", "MDT", new { id = model.MdtId });
+            //}
+            //catch (Exception ex)
+            //{
+            //    return View();
+            //}
         }
 
-        public ActionResult Details(int? id = 0) // page = 1 is coming from patiend details & Id is patient id, show latest MDT 
+        public ActionResult Details(int? id = 0) //MDT Id
         {
             MDTModel model = new MDTModel();
             if (id != null && id > 0)
             {
-                //  model.RedirectFrom = page;                                
-                using (var db = new MyDbContext("Name=MDTDbConn"))
+                OleDbDataAdapter adapter;
+                OleDbConnection myConnection = new OleDbConnection();
+                myConnection.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
+
+                myConnection.Open();
+
+                OleDbCommand cmd = new OleDbCommand("Select * FROM [MDT] where MDTId = " + id, myConnection);
+                adapter = new OleDbDataAdapter(cmd);
+                DataSet ds = new DataSet("MainDataSet");
+               
+                adapter.Fill(ds);
+                //  IList<MDTModel> mdts = new List<MDTModel>();
+                if (ds.Tables.Count > 0)
                 {
-
-                    model.MDTPatientId = db.MdtEpisodes.Where(x => x.MdtId == id).FirstOrDefault().MdtPatientId;
-                    var patient = db.PatientInformations.FirstOrDefault(x => x.PatientId == model.MDTPatientId);
-                    if (patient != null)
+                    var mdtlist = ds.Tables[0];
+                    // var userList = db.Users.ToList();
+                    foreach (DataRow mdt in mdtlist.Rows)
                     {
-                        model.Patient.FirstName = patient.FirstName;
-                        model.Patient.LastName = patient.LastName;
-                        model.Patient.NhsNo = patient.NhsNo;
-                        model.Patient.PatientId = patient.PatientId;
-                        model.Patient.AddressLine1 = patient.AddressLine1;
-                        model.Patient.AddressLine2 = patient.AddressLine2;
-                        model.Patient.City = patient.City;
-                        model.Patient.DateofBirth = patient.DateofBirth;
-                        model.Patient.GpAddressLine1 = patient.GpAddressLine1;
-                        model.Patient.GpAddressLine2 = patient.GpAddressLine2;
-                        model.Patient.GpCity = patient.GpCity;
-                        model.Patient.GpName = patient.GpName;
-                        model.Patient.GpPostcode = patient.GpPostcode;
-                        model.Patient.HospitalNo = patient.HospitalNo;
-                        model.Patient.Postcode = patient.Postcode;
+                        model.Comorbidities = mdt["Comorbidities"].ToString();
+                        model.History = mdt["History"].ToString();
+                        model.MDTDate = Convert.ToDateTime(mdt["MdtDate"].ToString());
+                        model.MDTDiscussion = mdt["MdtDiscussion"].ToString();
+                        model.MdtId = Convert.ToInt32(mdt["MdtId"].ToString());
+                        model.MDTPatientId = Convert.ToInt32(mdt["MDTPatientId"].ToString());
+                        // users.Add(new UserModel
                     }
-                    IList<MDTDetails> mDTDetails = new List<MDTDetails>();
-                    var MdtDetails = db.MdtEpisodes.Where(x => x.MdtPatientId == patient.PatientId).OrderByDescending(x => x.MdtDate).ToList();
-                    if (MdtDetails != null)
-                        foreach (var mdtdetail in MdtDetails)
-                            mDTDetails.Add(new MDTDetails { MDTId = mdtdetail.MdtId, MDTDate = mdtdetail.MdtDate });
 
-                    var mdt = db.MdtEpisodes.FirstOrDefault(x => x.MdtId == id);
-                    if (mdt != null)
+
+                    cmd = new OleDbCommand("Select * FROM [Patient] where PatientId = " + model.MDTPatientId, myConnection);
+                    adapter = new OleDbDataAdapter(cmd);
+                    ds = new DataSet("MainDataSet");
+                    if (ds.Tables.Count > 0)
                     {
-                        model.Comorbidities = mdt.Comorbidities;
-                        model.History = mdt.History;
-                        model.MDTDate = mdt.MdtDate;
-                        model.MDTDiscussion = mdt.MdtDiscussion;
-                        model.MdtId = mdt.MdtId;
-                        model.MDTEpisode = mDTDetails;
-                    }
+                        var patientlist = ds.Tables[0];
+                        // var userList = db.Users.ToList();
+                        foreach (DataRow patient in patientlist.Rows)
+                        {
+                            model.Patient.FirstName = patient["FirstName"].ToString();
+                            model.Patient.LastName = patient["LastName"].ToString();
+                            model.Patient.NhsNo = patient["NhsNo"].ToString();
+                            model.Patient.PatientId = Convert.ToInt32(patient["PatientId"].ToString());
+                            model.Patient.AddressLine1 = patient["AddressLine1"].ToString();
+                            model.Patient.AddressLine2 = patient["AddressLine2"].ToString();
+                            model.Patient.City = patient["City"].ToString();
+                            model.Patient.DateofBirth = Convert.ToDateTime(patient["DateofBirth"].ToString());
+                            model.Patient.GpAddressLine1 = patient["GpAddressLine1"].ToString();
+                            model.Patient.GpAddressLine2 = patient["GpAddressLine2"].ToString();
+                            model.Patient.GpCity = patient["GpCity"].ToString();
+                            model.Patient.GpName = patient["GpName"].ToString();
+                            model.Patient.GpPostcode = patient["GpPostcode"].ToString();
+                            model.Patient.HospitalNo = patient["HospitalNo"].ToString();
+                            model.Patient.Postcode = patient["Postcode"].ToString();
+                        }
                 }
+                }
+                myConnection.Close();
+                    //IList<MDTDetails> mDTDetails = new List<MDTDetails>();
+                    //var MdtDetails = db.MdtEpisodes.Where(x => x.MdtPatientId == patient.PatientId).OrderByDescending(x => x.MdtDate).ToList();
+                    //if (MdtDetails != null)
+                    //    foreach (var mdtdetail in MdtDetails)
+                    //        mDTDetails.Add(new MDTDetails { MDTId = mdtdetail.MdtId, MDTDate = mdtdetail.MdtDate });
+
+                    //var mdt = db.MdtEpisodes.FirstOrDefault(x => x.MdtId == id);
+                    //if (mdt != null)
+                    //{
+                    //    model.Comorbidities = mdt.Comorbidities;
+                    //    model.History = mdt.History;
+                    //    model.MDTDate = mdt.MdtDate;
+                    //    model.MDTDiscussion = mdt.MdtDiscussion;
+                    //    model.MdtId = mdt.MdtId;
+                    //   // model.MDTEpisode = mDTDetails;
+                    //}
+                //}
                 return View(model);
             }
             return View(model);
+        }
+
+        public ActionResult MDTUser()
+        {
+            return View();
         }
     }
 }
