@@ -23,8 +23,8 @@ namespace MVCAccessDB.Models
         public IList<MDTDetails> MDTEpisode { get; set; }
         public MDTModel()
         {
-            //Patient = new PatientModel();
-            //MDTEpisode = new List<MDTDetails>();
+            Patient = new PatientModel();
+            MDTEpisode = new List<MDTDetails>();
         }
     }
 }

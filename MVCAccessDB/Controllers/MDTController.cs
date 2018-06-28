@@ -24,12 +24,14 @@ namespace MVCAccessDB.Controllers
             MDTModel model = new MDTModel();
             if (id != null && id != 0)
                 model.MDTPatientId = Convert.ToInt32(id);
-            OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
+            // OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
+            OleDbConnection myConnection = new OleDbConnection();
 
+            myConnection.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
             myConnection.Open();
 
             //var datT = myConnection.GetSchema("user");
-            OleDbCommand cmd = new OleDbCommand("Select * FROM [PatientInformations] where Id = " + id, myConnection);
+            OleDbCommand cmd = new OleDbCommand("Select * FROM [Patient] where PatientId = " + id, myConnection);
             OleDbDataAdapter adapter;
             adapter = new OleDbDataAdapter(cmd);
 
@@ -47,11 +49,12 @@ namespace MVCAccessDB.Controllers
             //    foreach (var mdtdetail in MdtDetails)
             //        mDTDetails.Add(new MDTDetails { MDTId = mdtdetail.MdtId, MDTDate = mdtdetail.MdtDate });
             //}
-           
+
             foreach (DataRow patient in patientList.Rows)
             {
                 if (patient != null)
                 {
+                    model.MDTPatientId = Convert.ToInt32(patient["PatientId"].ToString());
                     model.Patient.FirstName = patient["FirstName"].ToString();
                     model.Patient.LastName = patient["LastName"].ToString();
                     model.Patient.NhsNo = patient["NhsNo"].ToString();
@@ -70,9 +73,24 @@ namespace MVCAccessDB.Controllers
                 }
                 
             }
+             cmd = new OleDbCommand("Select * FROM [MDT] where MDTPatientId = " + model.MDTPatientId + " order by MDTDate desc", myConnection);
+           
+            adapter = new OleDbDataAdapter(cmd);
 
+             ds = new DataSet("MainDataSet");
 
-            return View(model);
+            adapter.Fill(ds);
+            if (ds.Tables.Count > 0)
+            {
+                var mdtList = ds.Tables[0];
+                foreach (DataRow mdtdetail in mdtList.Rows)
+                {
+
+                    mDTDetails.Add(new MDTDetails { MDTId = Convert.ToInt32(mdtdetail["MdtId"].ToString()), MDTDate = Convert.ToDateTime(mdtdetail["MdtDate"].ToString()) });
+                }
+            }
+
+                return View(model);
         }
 
         [HttpPost]

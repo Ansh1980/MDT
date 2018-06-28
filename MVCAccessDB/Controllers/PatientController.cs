@@ -70,29 +70,32 @@ namespace MVCAccessDB.Controllers
         {
             try { 
             MDTModel model = new MDTModel();
-            if (id != null && id > 0)
-            {
-
-                if (id != null && id != 0)
-                    model.MDTPatientId = Convert.ToInt32(id);
-                OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
-
-                myConnection.Open();
-
-                //var datT = myConnection.GetSchema("user");
-                OleDbCommand cmd = new OleDbCommand("Select * FROM [PatientInformations] where Id = " + id, myConnection);
-                OleDbDataAdapter adapter;
-                adapter = new OleDbDataAdapter(cmd);
-
-                DataSet ds = new DataSet("MainDataSet");
-
-                adapter.Fill(ds);
-                IList<UserModel> users = new List<UserModel>();
-                var patientList = ds.Tables[0];
-                foreach (DataRow patient in patientList.Rows)
+                if (id != null && id > 0)
                 {
-                    //if (patient != null)
-                    //{
+
+                    if (id != null && id != 0)
+                        model.MDTPatientId = Convert.ToInt32(id);
+                    //OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
+                    OleDbConnection myConnection = new OleDbConnection();
+
+                    myConnection.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
+                    myConnection.Open();
+
+                    //var datT = myConnection.GetSchema("user");
+                    OleDbCommand cmd = new OleDbCommand("Select * FROM [Patient] where PatientId = " + id, myConnection);
+                    OleDbDataAdapter adapter;
+                    adapter = new OleDbDataAdapter(cmd);
+
+                    DataSet ds = new DataSet("MainDataSet");
+
+                    adapter.Fill(ds);
+                   // IList<UserModel> users = new List<UserModel>();
+                    if(ds.Tables.Count > 0) { 
+                    var patientList = ds.Tables[0];
+                    foreach (DataRow patient in patientList.Rows)
+                    {
+                        //if (patient != null)
+                        //{
                         model.Patient.FirstName = patient["FirstName"].ToString();
                         model.Patient.LastName = patient["LastName"].ToString();
                         model.Patient.NhsNo = patient["NhsNo"].ToString();
@@ -108,32 +111,33 @@ namespace MVCAccessDB.Controllers
                         model.Patient.GpPostcode = patient["GpPostcode"].ToString();
                         model.Patient.HospitalNo = patient["HospitalNo"].ToString();
                         model.Patient.Postcode = patient["Postcode"].ToString();
-                   // }
-                    //OleDbCommand Mdtcmd = new OleDbCommand("Select * FROM [MdtEpisodes] where Id = " + id, myConnection);
-                    //OleDbDataAdapter adapter;
-                    //adapter = new OleDbDataAdapter(cmd);
+                        // }
+                        //OleDbCommand Mdtcmd = new OleDbCommand("Select * FROM [MdtEpisodes] where Id = " + id, myConnection);
+                        //OleDbDataAdapter adapter;
+                        //adapter = new OleDbDataAdapter(cmd);
 
-                    //var mdt = db.MdtEpisodes.OrderByDescending(x => x.MdtDate).FirstOrDefault(x => x.MdtPatientId == id);
-                    //if (mdt != null)
-                    //{
-                    //    model.Comorbidities = mdt.Comorbidities;
-                    //    model.History = mdt.History;
-                    //    model.MDTDate = mdt.MdtDate;
-                    //    model.MDTDiscussion = mdt.MdtDiscussion;
-                    //    model.MdtId = mdt.MdtId;
-                    //}
-                    //IList<MDTDetails> mDTDetails = new List<MDTDetails>();
-                    //var MdtDetails = db.MdtEpisodes.Where(x => x.MdtPatientId == patient.PatientId).OrderByDescending(x => x.MdtDate).ToList();
-                    //if (MdtDetails != null)
-                    //    foreach (var mdtdetail in MdtDetails)
-                    //        mDTDetails.Add(new MDTDetails { MDTId = mdtdetail.MdtId, MDTDate = mdtdetail.MdtDate });
-                    //model.MDTEpisode = mDTDetails;
+                        //var mdt = db.MdtEpisodes.OrderByDescending(x => x.MdtDate).FirstOrDefault(x => x.MdtPatientId == id);
+                        //if (mdt != null)
+                        //{
+                        //    model.Comorbidities = mdt.Comorbidities;
+                        //    model.History = mdt.History;
+                        //    model.MDTDate = mdt.MdtDate;
+                        //    model.MDTDiscussion = mdt.MdtDiscussion;
+                        //    model.MdtId = mdt.MdtId;
+                        //}
+                        //IList<MDTDetails> mDTDetails = new List<MDTDetails>();
+                        //var MdtDetails = db.MdtEpisodes.Where(x => x.MdtPatientId == patient.PatientId).OrderByDescending(x => x.MdtDate).ToList();
+                        //if (MdtDetails != null)
+                        //    foreach (var mdtdetail in MdtDetails)
+                        //        mDTDetails.Add(new MDTDetails { MDTId = mdtdetail.MdtId, MDTDate = mdtdetail.MdtDate });
+                        //model.MDTEpisode = mDTDetails;
+                    }
+                    return View(model);
                 }
-                return View(model);
             }
             return View(model);
         }
-            catch
+            catch (Exception ex)
             {
                 return View("Error");
             }
@@ -163,20 +167,20 @@ namespace MVCAccessDB.Controllers
                 conn.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
                 //@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb";
                
-                OleDbCommand cmd = new OleDbCommand("INSERT into [PatientInformation] (Firstname, Lastname, HospitalNo, NhsNo, DateofBirth, AddressLine1, AddressLine2, City, Postcode,GpCity" +
-                    "GpName, GpAddressLine1, GpAddressLine2, GpPostcode, DateCreated, RowGuid, UserId) " +
-                    "Values(@Firstname, @Lastname, @HospitalNo, @NhsNo, @DateofBirth" +
-                    "@AddressLine1, @AddressLine2, @City, @Postcode,@GpCity,@GpName, @GpAddressLine1, @GpAddressLine2, @GpPostcode, @DateCreated, @RowGuid, @UserId)");
+                OleDbCommand cmd = new OleDbCommand("INSERT into [Patient] (Firstname, Lastname, HospitalNo, NhsNo, DateofBirth, AddressLine1, AddressLine2, City, Postcode,GpCity," +
+                    "GpName, GpAddressLine1, GpAddressLine2, GpPostcode, DateCreated,  UserId) " +
+                    "Values(@Firstname, @Lastname, @HospitalNo, @NhsNo, @DateofBirth," +
+                    "@AddressLine1, @AddressLine2, @City, @Postcode,@GpCity,@GpName, @GpAddressLine1, @GpAddressLine2, @GpPostcode, @DateCreated,  @UserId)");
                 cmd.Connection = conn;
 
                 conn.Open();
                 HttpCookie myCookie = Request.Cookies["MyTestCookie"];
-                string userid = "";
+                string userid = "1";
                 // Read the cookie information and display it.
-                if (myCookie != null)
-                    userid =  myCookie.Value;
-                else
-                    return RedirectToAction("index", "Home");
+                //if (myCookie != null)
+                //    userid =  myCookie.Value;
+                //else
+                //    return RedirectToAction("index", "Home");
 
                 if (conn.State == ConnectionState.Open)
                 {
@@ -195,7 +199,7 @@ namespace MVCAccessDB.Controllers
                     cmd.Parameters.Add("@GpAddressLine2", OleDbType.VarChar).Value = model.GpAddressLine2;
                     cmd.Parameters.Add("@GpPostcode", OleDbType.VarChar).Value = model.GpPostcode;
                     cmd.Parameters.Add("@DateCreated", OleDbType.Date).Value = DateTime.Now;
-                    cmd.Parameters.Add("@RowGuid", OleDbType.Guid).Value = Guid.NewGuid();
+                  //  cmd.Parameters.Add("@RowGuid", OleDbType.Guid).Value = Guid.NewGuid();
                     cmd.Parameters.Add("@UserId", OleDbType.Integer).Value = userid;
 
                     try
@@ -275,12 +279,14 @@ namespace MVCAccessDB.Controllers
         {
             try { 
             var filterBy = formCollection.Get("txtFilter");
-            OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
+                // OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
+                OleDbConnection myConnection = new OleDbConnection();
 
-            myConnection.Open();
+                myConnection.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
+                myConnection.Open();
 
             //var datT = myConnection.GetSchema("user");
-            OleDbCommand cmd = new OleDbCommand("Select * FROM [PatientInformations] where FirstName = " + filterBy + "OR LastName= " + filterBy + "OR NhsNo= " + filterBy + "OR HospitalNo= " + filterBy, myConnection);
+            OleDbCommand cmd = new OleDbCommand("Select * FROM [Patient] where FirstName = '" + filterBy + "' OR LastName= '" + filterBy + "' OR NhsNo= '" + filterBy + "' OR HospitalNo= '" + filterBy + "'", myConnection);
             OleDbDataAdapter adapter;
             adapter = new OleDbDataAdapter(cmd);
 

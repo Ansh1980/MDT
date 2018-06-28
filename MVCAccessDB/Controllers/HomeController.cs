@@ -50,7 +50,7 @@ namespace MVCAccessDB.Controllers
                     users.Add(new UserModel
                     {
                         FirstName = user["FirstName"].ToString(),
-                        Lastname = user["lastname"].ToString(),
+                        Lastname = user["Lastname"].ToString(),
                         UserId = Convert.ToInt32(user["UserId"].ToString()),
                         IsActive = Convert.ToBoolean(user["IsAdmin"].ToString())
 
