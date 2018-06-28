@@ -1,130 +1,89 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Data;
-//using System.Data.OleDb;
-//using System.Linq;
-//using System.Web;
-//using System.Web.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Data;
+using System.Data.OleDb;
+using System.Configuration;
+using MVCAccessDB.Models;
+namespace MVCAccessDB.Controllers
+{
+    public class HomeController : Controller
+    {
+        public ActionResult Index()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Index(UserModel model)
+        {
+            try
+            {
+                // OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
+                OleDbConnection myConnection = new OleDbConnection();
+                myConnection.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
 
-//namespace MVCAccessDB.Controllers
-//{
-//    public class HomeController : Controller
-//    {
-//        string databasePath = "c:\\users\\ashrivastava\\documents\\test.accdb";
-//        //DataTable userTable = new DataTable();
-//        OleDbDataAdapter adapter;
-//        OleDbConnection connection;
-//        OleDbCommand command;
-//        OleDbCommandBuilder builder;
-//        //DataSet ds;
-//        //DataSet tempDs;
-//        public string DatabaseName = null;
-//        string connectionString = "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=";
+                myConnection.Open();
+                OleDbDataAdapter adapter;
 
+                OleDbCommand cmd = new OleDbCommand("Select * FROM [user] where IsActive = 1 and FirstName = " + model.FirstName, myConnection);
+                adapter = new OleDbDataAdapter(cmd);
+                DataSet ds = new DataSet("MainDataSet");
 
-//        public ActionResult Index()
-//        {
+                adapter.Fill(ds);
+                IList<UserModel> users = new List<UserModel>();
+                if (ds.Tables.Count > 0)
+                { 
+               
+                var userlist = ds.Tables[0];
+                    HttpCookie myCookie = new HttpCookie("MDTuserCookie");
+                    DateTime now = DateTime.Now;
+                    // Set the cookie expiration date.
+                    myCookie.Expires = now.AddHours(1); // For a cookie to effectively never expire
 
-//            using (OleDbConnection dbc = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\ashrivastava\\documents\\test.accdb"))
-//            {
-//                using (OleDbCommand cmd2 = dbc.CreateCommand())
-//                {
-//                    cmd2.CommandText = "select * from [user]";
-//                    // cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    // Add the cookie.
+                    Response.Cookies.Add(myCookie);
+                  
+                    foreach (DataRow user in userlist.Rows)
+                    {
+                    users.Add(new UserModel
+                    {
+                        FirstName = user["FirstName"].ToString(),
+                        Lastname = user["lastname"].ToString(),
+                        UserId = Convert.ToInt32(user["UserId"].ToString()),
+                        IsActive = Convert.ToBoolean(user["IsAdmin"].ToString())
 
-//                    //Now lets add the values
-//                    OleDbParameter[] values = new OleDbParameter[] {
-//                //new OleDbParameter("@name", model.Name?? DBNull.Value.ToString()),
-//                //new OleDbParameter("@color", model.Color?? DBNull.Value.ToString()),
-//                //new OleDbParameter("@taste", model.Taste?? DBNull.Value.ToString())
-//            };
+                    });
+                        // Set the cookie value.
+                        myCookie.Value = user["UserId"].ToString();
+                        break;
+                    }
+                myConnection.Close();
+                 
 
-//                    try
-//                    {
-//                        cmd2.Parameters.AddRange(values);
-//                        //open Connection
-//                        dbc.Open();
-//                        //Execute our create Query
-//                        cmd2.ExecuteNonQuery();
-//                        //close Connection
-//                        dbc.Close();
-//                    }
-//                    finally
-//                    {
-//                        //close connection if something went wrong
-//                        dbc.Close();
-//                    }
-//                }
-//                /////////////////////////////////////
-//                string getTConnection = connectionString + databasePath; ;
-//                OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\ashrivastava\\documents\\test.accdb");
+                }
+                return View(users);
+            }
+            catch
+            {
+                return View("Error");
+            }
 
-//                myConnection.Open();
+        }
 
-//                //var datT = myConnection.GetSchema("user");
-//                OleDbCommand cmd = new OleDbCommand("Select * FROM [user]", myConnection);
-//                adapter = new OleDbDataAdapter(cmd);
-//                builder = new OleDbCommandBuilder(adapter);
-//                DataSet ds = new DataSet("MainDataSet");
-//                // tempDs = new DataSet("TempDataSet");
+        public ActionResult About()
+        {
+            ViewBag.Message = "Your application description page.";
 
-//                // connection.Open();
-//                //adapter.Fill(tempDs);
-//                //tempDs.Clear();
-//                //tempDs.Dispose();
-//                adapter.Fill(ds);
-//                //  userTable = ds.Tables[ddTables.Text];
+            return View();
+        }
 
-//                return View();
-//            }
-//        }
+        public ActionResult Contact()
+        {
+            ViewBag.Message = "Your contact page.";
 
-//        public ActionResult About()
-//        {
-           
-//                OleDbConnection conn = new OleDbConnection();
-//                conn.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\ashrivastava\\documents\\test.accdb";
-
-//                String Firstname = "Ansh";
-//                String lastname = "Shri";
-
-//                OleDbCommand cmd = new OleDbCommand("INSERT into [user] (Firstname, lastname) Values(@Firstname, @lastname)");
-//                cmd.Connection = conn;
-
-//                conn.Open();
-
-//                if (conn.State == ConnectionState.Open)
-//                {
-//                    cmd.Parameters.Add("@Firstname", OleDbType.VarChar).Value = Firstname;
-//                    cmd.Parameters.Add("@lastname", OleDbType.VarChar).Value = lastname;
-
-//                    try
-//                    {
-//                        cmd.ExecuteNonQuery();
-//                      //  MessageBox.Show("Data Added");
-//                        conn.Close();
-//                    }
-//                    catch (OleDbException ex)
-//                    {
-//                    string str = ex.ToString();
-//                        conn.Close();
-//                    }
-//                }
-//                else
-//                {
-//                  //  MessageBox.Show("Connection Failed");
-//                }
-            
-        
-
-//            return View();
-//        }
-
-//        public ActionResult Contact()
-//        {
-//            ViewBag.Message = "Your contact page.";
-
-//            return View();
-//        }
-//    }
-//}
+            return View();
+        }
+    }
+}

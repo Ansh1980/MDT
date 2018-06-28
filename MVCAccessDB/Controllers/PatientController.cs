@@ -59,7 +59,7 @@ namespace MVCAccessDB.Controllers
             }
             catch
             {
-                return View();
+                return View("Error");
                /// return view
             }
            
@@ -68,6 +68,7 @@ namespace MVCAccessDB.Controllers
         // GET: PatientInformation/Details/5
         public ActionResult Details(int? id = 0)
         {
+            try { 
             MDTModel model = new MDTModel();
             if (id != null && id > 0)
             {
@@ -132,13 +133,24 @@ namespace MVCAccessDB.Controllers
             }
             return View(model);
         }
+            catch
+            {
+                return View("Error");
+            }
+    }
 
         // GET: PatientInformation/Create
         public ActionResult Create()
         {
+            try { 
             PatientModel model = new PatientModel();
             return View(model);
-        }
+            }
+            catch
+            {
+                return View("Error");
+            }
+}
 
         // POST: PatientInformation/Create
         [HttpPost]
@@ -158,6 +170,13 @@ namespace MVCAccessDB.Controllers
                 cmd.Connection = conn;
 
                 conn.Open();
+                HttpCookie myCookie = Request.Cookies["MyTestCookie"];
+                string userid = "";
+                // Read the cookie information and display it.
+                if (myCookie != null)
+                    userid =  myCookie.Value;
+                else
+                    return RedirectToAction("index", "Home");
 
                 if (conn.State == ConnectionState.Open)
                 {
@@ -177,7 +196,7 @@ namespace MVCAccessDB.Controllers
                     cmd.Parameters.Add("@GpPostcode", OleDbType.VarChar).Value = model.GpPostcode;
                     cmd.Parameters.Add("@DateCreated", OleDbType.Date).Value = DateTime.Now;
                     cmd.Parameters.Add("@RowGuid", OleDbType.Guid).Value = Guid.NewGuid();
-                    cmd.Parameters.Add("@UserId", OleDbType.Integer).Value = 1;
+                    cmd.Parameters.Add("@UserId", OleDbType.Integer).Value = userid;
 
                     try
                     {
@@ -189,6 +208,7 @@ namespace MVCAccessDB.Controllers
                     {
                         string str = ex.ToString();
                         conn.Close();
+                        return View("Error");
                     }
                 }
                 else
@@ -201,7 +221,7 @@ namespace MVCAccessDB.Controllers
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index");
+                return View("Error");
             }
           
         }
@@ -224,7 +244,7 @@ namespace MVCAccessDB.Controllers
             }
             catch
             {
-                return View();
+                return View("Error");
             }
         }
 
@@ -253,7 +273,7 @@ namespace MVCAccessDB.Controllers
         [HttpPost]
         public ActionResult Filter(FormCollection formCollection)
         {
-
+            try { 
             var filterBy = formCollection.Get("txtFilter");
             OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
 
@@ -288,7 +308,12 @@ namespace MVCAccessDB.Controllers
                 }
             }
             return View("Index", patientList);
-
         }
+            catch (Exception ex)
+            {
+                return View("Error");
+        }
+
+    }
     }
 }

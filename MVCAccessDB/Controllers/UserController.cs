@@ -16,81 +16,54 @@ namespace MVCAccessDB.Controllers
         // GET: User
         public ActionResult Index()
         {
-            ///////test
-            //using (OleDbConnection dbc = new OleDbConnection(ConfigurationManager.AppSettings["connectionString"]))
-            //{
-            //    using (OleDbCommand cmd = dbc.CreateCommand())
-            //    {
-            //        //cmd.CommandText = "select * from [user]";
-            //        //adapter = new OleDbDataAdapter(cmd);
-            //        //  builder = new OleDbCommandBuilder(adapter);
-            //        DataSet ds = new DataSet("UserDataSet");
-            //        // tempDs = new DataSet("TempDataSet");
-
-            //        // connection.Open();
-            //        //adapter.Fill(tempDs);
-            //        //tempDs.Clear();
-            //        //tempDs.Dispose();
-            //        adapter.Fill(ds);
-            // OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
-            OleDbConnection myConnection = new OleDbConnection();
-            myConnection.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
-
-            myConnection.Open();
-           
-            OleDbCommand cmd = new OleDbCommand("Select * FROM [user]" , myConnection);
-            adapter = new OleDbDataAdapter(cmd);
-           // builder = new OleDbCommandBuilder(adapter);
-            DataSet ds = new DataSet("MainDataSet");
-            // tempDs = new DataSet("TempDataSet");
-
-            // connection.Open();
-            //adapter.Fill(tempDs);
-            //tempDs.Clear();
-            //tempDs.Dispose();
-            adapter.Fill(ds);
-            IList<UserModel> users = new List<UserModel>();
-            var userlist = ds.Tables[0];
-            // var userList = db.Users.ToList();
-            foreach (DataRow user in userlist.Rows)
+            try
             {
-                users.Add(new UserModel
+                // OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
+                OleDbConnection myConnection = new OleDbConnection();
+                myConnection.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
+
+                myConnection.Open();
+
+                OleDbCommand cmd = new OleDbCommand("Select * FROM [user]", myConnection);
+                adapter = new OleDbDataAdapter(cmd);
+                DataSet ds = new DataSet("MainDataSet");
+               
+                adapter.Fill(ds);
+                IList<UserModel> users = new List<UserModel>();
+                var userlist = ds.Tables[0];
+                // var userList = db.Users.ToList();
+                foreach (DataRow user in userlist.Rows)
                 {
-                    FirstName = user["FirstName"].ToString(),
-                    Lastname = user["lastname"].ToString(),
-                    UserId = Convert.ToInt32(user[0].ToString()),
-                    IsActive = Convert.ToBoolean(user["IsAdmin"].ToString())
+                    users.Add(new UserModel
+                    {
+                        FirstName = user["FirstName"].ToString(),
+                        Lastname = user["lastname"].ToString(),
+                        UserId = Convert.ToInt32(user[0].ToString()),
+                        IsActive = Convert.ToBoolean(user["IsAdmin"].ToString())
 
-                });
+                    });
+                }
+                myConnection.Close();
+                return View(users);
             }
-            myConnection.Close();
-                    return View(users);
-               // }
-           // }
-
-
-            //var userList = db.Users.ToList();
-            //foreach (var user in userList)
-            //{
-            //    users.Add(new UserModel
-            //    {
-            //        FirstName = user.FirstName,
-            //        Lastname = user.Lastname,
-            //        UserId = user.UserId,
-            //        UserName = user.UserName
-
-            //    });
-            //}
-
-            //return View(users);
+            catch
+            {
+                return View("Error");
+            }
            
         }
 
         public ActionResult Create()
         {
-            UserModel model = new UserModel();
-            return View(model);
-        }
+            try { 
+                    UserModel model = new UserModel();
+                    return View(model);
+                }
+            catch
+            {
+                return View("Error");
+            }
+}
 
         [HttpPost]
         public ActionResult Create(UserModel model)//FormCollection collection)
