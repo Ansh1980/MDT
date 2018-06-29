@@ -102,6 +102,7 @@ namespace MVCAccessDB.Controllers
         [HttpPost]
         public ActionResult Create(MDTModel model)//FormCollection collection)
         {
+            https://stackoverflow.com/questions/37778489/how-to-make-check-box-list-in-asp-net-mvc
             try
             {
                 OleDbConnection conn = new OleDbConnection();
@@ -191,7 +192,10 @@ namespace MVCAccessDB.Controllers
 
                 myConnection.Open();
 
-                OleDbCommand cmd = new OleDbCommand("Select * FROM [MDT] where MDTId = " + id, myConnection);
+                //OleDbCommand cmd = new OleDbCommand("Select * FROM [MDT] where MDTId = " + id, myConnection);
+                OleDbCommand cmd = new OleDbCommand("Select MDT.* , User.FirstName, User.Lastname FROM [MDT] inner join MDTUser on MDTUser.MDTId = MDT.MDTId inner join USER" +
+                    " on user.UserId = MDTUser.UserId" +
+                    " where MDT.MDTId = " + id, myConnection);
                 adapter = new OleDbDataAdapter(cmd);
                 DataSet ds = new DataSet("MainDataSet");
                
@@ -238,8 +242,21 @@ namespace MVCAccessDB.Controllers
                             model.Patient.HospitalNo = patient["HospitalNo"].ToString();
                             model.Patient.Postcode = patient["Postcode"].ToString();
                         }
-                }
-                }
+                    }
+                    cmd = new OleDbCommand("Select * FROM [MDTUser] where MDTId = " + model.MdtId, myConnection);
+                    adapter = new OleDbDataAdapter(cmd);
+                    ds = new DataSet("MainDataSet");
+                    if (ds.Tables.Count > 0)
+                    {
+                        var userlist = ds.Tables[0];
+                        // var userList = db.Users.ToList();
+                        foreach (DataRow patient in userlist.Rows)
+                        {
+                            //model.Users.
+                            https://stackoverflow.com/questions/39428636/how-to-join-tables-and-queries-in-c-sharp-with-access-database
+                        }
+                    }
+                    }
                 myConnection.Close();
                     //IList<MDTDetails> mDTDetails = new List<MDTDetails>();
                     //var MdtDetails = db.MdtEpisodes.Where(x => x.MdtPatientId == patient.PatientId).OrderByDescending(x => x.MdtDate).ToList();
