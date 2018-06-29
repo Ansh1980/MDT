@@ -75,7 +75,7 @@ namespace MVCAccessDB.Controllers
 
                 myConnection.Open();
 
-                OleDbCommand cmd = new OleDbCommand("Select * FROM [MDT] where MDTId = " + id, myConnection);
+                OleDbCommand cmd = new OleDbCommand("Select * FROM [MDT] where MDTPatientId = " + id + " order by MDTDate Desc", myConnection);
                 adapter = new OleDbDataAdapter(cmd);
                 DataSet ds = new DataSet("MainDataSet");
 
@@ -94,6 +94,7 @@ namespace MVCAccessDB.Controllers
                         model.MdtId = Convert.ToInt32(mdt["MdtId"].ToString());
                         model.MDTPatientId = Convert.ToInt32(mdt["MDTPatientId"].ToString());
                         // users.Add(new UserModel
+                        break;
                     }
 
 

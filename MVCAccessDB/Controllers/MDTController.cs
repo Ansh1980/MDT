@@ -39,18 +39,8 @@ namespace MVCAccessDB.Controllers
             DataSet ds = new DataSet("MainDataSet");
 
             adapter.Fill(ds);
-            IList<UserModel> users = new List<UserModel>();
             var patientList = ds.Tables[0];
-            //var patient = db.PatientInformations.FirstOrDefault(x => x.PatientId == id);
-            IList<MDTDetails> mDTDetails = new List<MDTDetails>();
-            //var MdtDetails = db.MdtEpisodes.Where(x => x.MdtPatientId == patient.PatientId).ToList();
-            //if (MdtDetails != null)
-            //{
-            //    MdtDetails = MdtDetails.OrderByDescending(x => x.MdtDate).ToList();
-            //    foreach (var mdtdetail in MdtDetails)
-            //        mDTDetails.Add(new MDTDetails { MDTId = mdtdetail.MdtId, MDTDate = mdtdetail.MdtDate });
-            //}
-
+                  
             foreach (DataRow patient in patientList.Rows)
             {
                 if (patient != null)
@@ -87,9 +77,26 @@ namespace MVCAccessDB.Controllers
                 foreach (DataRow mdtdetail in mdtList.Rows)
                 {
 
-                    mDTDetails.Add(new MDTDetails { MDTId = Convert.ToInt32(mdtdetail["MdtId"].ToString()), MDTDate = Convert.ToDateTime(mdtdetail["MdtDate"].ToString()) });
+                    model.MDTEpisode.Add(new MDTDetails { MDTId = Convert.ToInt32(mdtdetail["MdtId"].ToString()), MDTDate = Convert.ToDateTime(mdtdetail["MdtDate"].ToString()) });
                 }
             }
+
+                cmd = new OleDbCommand("Select * FROM [User] where IsActive = true order by FirstName ASC", myConnection);
+
+                adapter = new OleDbDataAdapter(cmd);
+
+                ds = new DataSet("MainDataSet");
+
+                adapter.Fill(ds);
+                if (ds.Tables.Count > 0)
+                {
+                    var userList = ds.Tables[0];
+                    foreach (DataRow userdetail in userList.Rows)
+                    {
+
+                        model.Users.Add(new UserList { UserId = Convert.ToInt32(userdetail["UserId"].ToString()), FullName = userdetail["FirstName"].ToString() + " " + userdetail["LastName"].ToString() });
+                    }
+                }
                 myConnection.Close();
                 return View(model);
         }
@@ -100,20 +107,20 @@ namespace MVCAccessDB.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(MDTModel model)//FormCollection collection)
+        public ActionResult Create(MDTModel model)
         {
-            https://stackoverflow.com/questions/37778489/how-to-make-check-box-list-in-asp-net-mvc
+          
             try
             {
                 OleDbConnection conn = new OleDbConnection();
 
                 conn.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
                
-                OleDbCommand cmd = new OleDbCommand("INSERT into [MDT] (Comorbidities, History, MDTDate, MDTDiscussion, MDTPatientId, DateCreated, Userid) Values(@Comorbidities, @History , @MDTDate, @MDTDiscussion, @MDTPatientId, @DateCreated, @UserId)");
+                OleDbCommand cmd = new OleDbCommand("INSERT into [MDT] (Comorbidities, History, MDTDate, MDTDiscussion, MDTPatientId, DateCreated, Userid, RowId) Values(@Comorbidities, @History , @MDTDate, @MDTDiscussion, @MDTPatientId, @DateCreated, @UserId, @RowId)");
                 cmd.Connection = conn;
 
                 conn.Open();
-
+                Guid rowid = Guid.NewGuid();
                 if (conn.State == ConnectionState.Open)
                 {
                     cmd.Parameters.Add("@Comorbidities", OleDbType.VarChar).Value = model.Comorbidities;
@@ -123,11 +130,41 @@ namespace MVCAccessDB.Controllers
                     cmd.Parameters.Add("@MDTPatientId", OleDbType.VarChar).Value = model.MDTPatientId;
                     cmd.Parameters.Add("@DateCreated", OleDbType.VarChar).Value = DateTime.Now;
                     cmd.Parameters.Add("@UserId", OleDbType.VarChar).Value = 1;
+                    cmd.Parameters.Add("@RowId", OleDbType.Guid).Value = rowid;
 
                     try
                     {
                         cmd.ExecuteNonQuery();
-                        //  MessageBox.Show("Data Added");
+                        //var datT = myConnection.GetSchema("user");
+                        cmd = new OleDbCommand("Select * FROM [MDT] where RowId = '{" + rowid + "}'", conn);
+                        OleDbDataAdapter adapter;
+                        adapter = new OleDbDataAdapter(cmd);
+
+                        DataSet ds = new DataSet("MainDataSet");
+
+                        adapter.Fill(ds);
+                        var MDTList = ds.Tables[0];
+
+                        foreach (DataRow mdt in MDTList.Rows)
+                        {
+                            model.MdtId = Convert.ToInt32(mdt["MDTId"].ToString());
+                            break;
+                        }
+                        foreach(var user in model.Users.Where(x =>x.Selected))
+                        { 
+                        cmd = new OleDbCommand("INSERT into [MDTUser] (MDTId, UserId, FullName) Values(@MDTId, @UserId , @FullName)");
+                        cmd.Connection = conn;
+
+
+                        if (conn.State == ConnectionState.Open)
+                        {
+
+                            cmd.Parameters.Add("@MDTId", OleDbType.VarChar).Value = model.MdtId;
+                            cmd.Parameters.Add("@UserId", OleDbType.VarChar).Value = user.UserId;
+                            cmd.Parameters.Add("@FullName", OleDbType.VarChar).Value = user.FullName;
+                        }
+                        cmd.ExecuteNonQuery();
+                    }
                         conn.Close();
                     }
                     catch (OleDbException ex)
@@ -142,7 +179,7 @@ namespace MVCAccessDB.Controllers
                 }
 
                 conn.Close();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "MDT", new { id = model.MdtId });
             }
             catch (Exception ex)
             {
@@ -192,10 +229,10 @@ namespace MVCAccessDB.Controllers
 
                 myConnection.Open();
 
-                //OleDbCommand cmd = new OleDbCommand("Select * FROM [MDT] where MDTId = " + id, myConnection);
-                OleDbCommand cmd = new OleDbCommand("Select MDT.* , User.FirstName, User.Lastname FROM [MDT] inner join MDTUser on MDTUser.MDTId = MDT.MDTId inner join USER" +
-                    " on user.UserId = MDTUser.UserId" +
-                    " where MDT.MDTId = " + id, myConnection);
+                OleDbCommand cmd = new OleDbCommand("Select * FROM [MDT] where MDTId = " + id, myConnection);
+                //OleDbCommand cmd = new OleDbCommand("Select MDT.* , User.FirstName, User.Lastname FROM [MDT] inner join MDTUser on MDTUser.MDTId = MDT.MDTId inner join USER" +
+                //    " on user.UserId = MDTUser.UserId" +
+                //    " where MDT.MDTId = " + id, myConnection);
                 adapter = new OleDbDataAdapter(cmd);
                 DataSet ds = new DataSet("MainDataSet");
                
@@ -215,12 +252,14 @@ namespace MVCAccessDB.Controllers
                         model.MDTPatientId = Convert.ToInt32(mdt["MDTPatientId"].ToString());
                         // users.Add(new UserModel
                     }
+                }
 
-
-                    cmd = new OleDbCommand("Select * FROM [Patient] where PatientId = " + model.MDTPatientId, myConnection);
+                   cmd = new OleDbCommand("Select * FROM [Patient] where PatientId = " + model.MDTPatientId, myConnection);
+                   
                     adapter = new OleDbDataAdapter(cmd);
                     ds = new DataSet("MainDataSet");
-                    if (ds.Tables.Count > 0)
+                     adapter.Fill(ds);
+                if (ds.Tables.Count > 0)
                     {
                         var patientlist = ds.Tables[0];
                         // var userList = db.Users.ToList();
@@ -246,35 +285,36 @@ namespace MVCAccessDB.Controllers
                     cmd = new OleDbCommand("Select * FROM [MDTUser] where MDTId = " + model.MdtId, myConnection);
                     adapter = new OleDbDataAdapter(cmd);
                     ds = new DataSet("MainDataSet");
-                    if (ds.Tables.Count > 0)
+                    adapter.Fill(ds);
+                if (ds.Tables.Count > 0)
                     {
                         var userlist = ds.Tables[0];
                         // var userList = db.Users.ToList();
-                        foreach (DataRow patient in userlist.Rows)
+                        foreach (DataRow userdetail in userlist.Rows)
                         {
-                            //model.Users.
-                            https://stackoverflow.com/questions/39428636/how-to-join-tables-and-queries-in-c-sharp-with-access-database
+                            model.Users.Add(new UserList { UserId = Convert.ToInt32(userdetail["UserId"].ToString()), FullName = userdetail["FullName"].ToString() , Selected = true});
                         }
                     }
-                    }
-                myConnection.Close();
-                    //IList<MDTDetails> mDTDetails = new List<MDTDetails>();
-                    //var MdtDetails = db.MdtEpisodes.Where(x => x.MdtPatientId == patient.PatientId).OrderByDescending(x => x.MdtDate).ToList();
-                    //if (MdtDetails != null)
-                    //    foreach (var mdtdetail in MdtDetails)
-                    //        mDTDetails.Add(new MDTDetails { MDTId = mdtdetail.MdtId, MDTDate = mdtdetail.MdtDate });
 
-                    //var mdt = db.MdtEpisodes.FirstOrDefault(x => x.MdtId == id);
-                    //if (mdt != null)
-                    //{
-                    //    model.Comorbidities = mdt.Comorbidities;
-                    //    model.History = mdt.History;
-                    //    model.MDTDate = mdt.MdtDate;
-                    //    model.MDTDiscussion = mdt.MdtDiscussion;
-                    //    model.MdtId = mdt.MdtId;
-                    //   // model.MDTEpisode = mDTDetails;
-                    //}
-                //}
+                cmd = new OleDbCommand("Select * FROM [MDT] where MDTPatientId = " + model.MDTPatientId + " order by MDTDate desc", myConnection);
+
+                adapter = new OleDbDataAdapter(cmd);
+
+                ds = new DataSet("MainDataSet");
+
+                adapter.Fill(ds);
+                if (ds.Tables.Count > 0)
+                {
+                    var mdtList = ds.Tables[0];
+                    foreach (DataRow mdtdetail in mdtList.Rows)
+                    {
+
+                        model.MDTEpisode.Add(new MDTDetails { MDTId = Convert.ToInt32(mdtdetail["MdtId"].ToString()), MDTDate = Convert.ToDateTime(mdtdetail["MdtDate"].ToString()) });
+                    }
+                }
+
+                myConnection.Close();
+                    
                 return View(model);
             }
             return View(model);

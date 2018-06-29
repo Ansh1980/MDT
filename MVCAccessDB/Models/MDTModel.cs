@@ -21,12 +21,20 @@ namespace MVCAccessDB.Models
         public PatientModel Patient { get; set; }
         public int? RedirectFrom { get; set; }
         public IList<MDTDetails> MDTEpisode { get; set; }
-        public IList<UserModel> Users { get; set; }
+        public IList<UserList> Users { get; set; }
+        
         public MDTModel()
         {
             Patient = new PatientModel();
             MDTEpisode = new List<MDTDetails>();
-            Users = new List<UserModel>();
+            Users = new List<UserList>();
         }
+    }
+
+    public class UserList
+    {
+        public int UserId { get; set; }
+        public string FullName  { get; set; }
+        public bool Selected { get; set; }
     }
 }

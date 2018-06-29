@@ -31,22 +31,21 @@
             }
         </div>
 
-        <div class="vertical-menu" style="margin-top:20px">
+        @*<div class="vertical-menu" style="margin-top:20px">
             <a href="#" class="active">Attendees  @DateTime.Now.ToShortDateString()</a>
         @foreach (var item in Model.Users)
         {
         <div class="checkbox">
             <label>
                 <input type="checkbox"
-                       name="SelectedFruits"
-                       value="@item.UserId" /> @item.FirstName @item.Lastname
+                       name="SelectedUsers"
+                       value="@item.UserId" /> @item.FullName
                 </label>
             </div>
-            @*@Html.CheckBoxFor(item.UserId, item.FirstName + " " + item.Lastname);
-        <input type="checkbox" name="user" value="2" style="padding-left:10px">Shakil*@
+           
         }
 
-        </div>
+        </div>*@
     </div>
     <div class="col-sm-10" style="text-align: left;">
 
@@ -100,22 +99,25 @@
         @using (Html.BeginForm("Create", "MDT", FormMethod.Post))
     {
         @Html.AntiForgeryToken()
-        <div class="vertical-menu" style="margin-top:20px; float:right">
-            <a href="#" class="active">Attendees  @DateTime.Now.ToShortDateString()</a>
-            @foreach (var item in Model.Users)
+        @*<div class="vertical-menu" style="margin-top:20px; float:left">
+            <a href="#" class="active">Attendees  @DateTime.Now.ToShortDateString()</a>*@
+           
+            @*@foreach (var item in Model.Users)
             {
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox"
-                           name="SelectedFruits"
-                           value="@item.UserId" /> @item.FirstName @item.Lastname
-                    </label>
-                </div>
-                @*@Html.CheckBoxFor(item.UserId, item.FirstName + " " + item.Lastname);
-                <input type="checkbox" name="user" value="2" style="padding-left:10px">Shakil*@
-            }
+                <input type="checkbox" class="checkbox" name="SelectedUsers3" value="@item.UserId" id="@item.UserId" />
+                <label for="@item.FullName">@item.FullName</label>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox"
+                               name="SelectedUsers2"
+                               value="@item.UserId" /> @item.FullName
+                        </label>
+                    </div>
+                  
+                }*@
 
-        </div> <div style="float:right">
+        @*</div>*@ 
+        <div>
             <ul class="nav nav-tabs">
                 <li class="active">
                     <a href="#tab_1" data-toggle="tab">Tab Header 1</a>
@@ -126,12 +128,15 @@
                 <li>
                     <a href="#tab_3" data-toggle="tab">Tab Header 3</a>
                 </li>
+                <li>
+                    <a href="#tab_4" data-toggle="tab">Attendees  @DateTime.Now.ToShortDateString()</a>
+                </li>
             </ul>
             <div class="form-horizontal">
                 <div class="tab-content">
                     <div class="tab-pane active" id="tab_1">
                         @Html.HiddenFor(model => model.MDTPatientId, Model.Patient.PatientId)
-                        <hr />
+                        @*<hr />*@
                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                         <div class="form-group">
                             @Html.LabelFor(model => model.MDTDate, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -166,13 +171,29 @@
                             </div>
                         </div>
 
+                       
+                    </div>
+                    <div class="tab-pane fade" id="tab_4">
+                       
                         <div class="form-group">
                             <div class="col-md-offset-2 col-md-10">
-                                <input style="text-align: left; background-color:#003366" type="submit" value="Add" class="btn btn-primary pull-left" />
+                                @for (var i = 0; i < Model.Users.Count(); i++)
+                                {
+                                <div>
+                                    @Html.HiddenFor(model => model.Users[i].UserId)
+                                    @Html.HiddenFor(model => model.Users[i].FullName)
+                                    @Html.CheckBoxFor(model => model.Users[i].Selected)
+                                    @Html.LabelFor(model => model.Users[i].Selected, Model.Users[i].FullName)
+                                </div>
+                                }
+                            </div>
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input style="text-align: left; background-color:#003366" type="submit" value="Add" class="btn btn-primary pull-left" />
+                                </div>
                             </div>
                         </div>
+
                     </div>
-                </div>
             </div>
         </div>
         @*<div class="form-horizontal">
