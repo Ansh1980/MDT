@@ -54,7 +54,7 @@ namespace MVCAccessDB.Controllers
                         //MDTEpisode = mDTDetails
                     });
                 }
-
+                myConnection.Close();
                 return View(patients);
             }
             catch
@@ -132,10 +132,12 @@ namespace MVCAccessDB.Controllers
                         //        mDTDetails.Add(new MDTDetails { MDTId = mdtdetail.MdtId, MDTDate = mdtdetail.MdtDate });
                         //model.MDTEpisode = mDTDetails;
                     }
-                    return View(model);
+                        myConnection.Close();
+                        return View(model);
                 }
             }
-            return View(model);
+               
+                return View(model);
         }
             catch (Exception ex)
             {
@@ -313,7 +315,8 @@ namespace MVCAccessDB.Controllers
 
                 }
             }
-            return View("Index", patientList);
+                myConnection.Close();
+                return View("Index", patientList);
         }
             catch (Exception ex)
             {

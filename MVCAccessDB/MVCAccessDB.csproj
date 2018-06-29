@@ -144,6 +144,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MDTController.cs" />
+    <Compile Include="Controllers\MDTUserController.cs" />
     <Compile Include="Controllers\PatientController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
@@ -254,6 +255,8 @@
     <Content Include="Views\Patient\Create.cshtml" />
     <Content Include="Views\Patient\Details.cshtml" />
     <Content Include="Views\Patient\Index.cshtml" />
+    <Content Include="Views\MDTUser\Index.cshtml" />
+    <Content Include="Views\MDTUser\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

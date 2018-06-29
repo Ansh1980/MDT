@@ -21,6 +21,7 @@ namespace MVCAccessDB.Controllers
         // GET: PatientInformation/Create
         public ActionResult Create(int? id = 0)
         {
+            try { 
             MDTModel model = new MDTModel();
             if (id != null && id != 0)
                 model.MDTPatientId = Convert.ToInt32(id);
@@ -71,13 +72,13 @@ namespace MVCAccessDB.Controllers
                     model.Patient.HospitalNo = patient["HospitalNo"].ToString();
                     model.Patient.Postcode = patient["Postcode"].ToString();
                 }
-                
+
             }
-             cmd = new OleDbCommand("Select * FROM [MDT] where MDTPatientId = " + model.MDTPatientId + " order by MDTDate desc", myConnection);
-           
+            cmd = new OleDbCommand("Select * FROM [MDT] where MDTPatientId = " + model.MDTPatientId + " order by MDTDate desc", myConnection);
+
             adapter = new OleDbDataAdapter(cmd);
 
-             ds = new DataSet("MainDataSet");
+            ds = new DataSet("MainDataSet");
 
             adapter.Fill(ds);
             if (ds.Tables.Count > 0)
@@ -89,8 +90,13 @@ namespace MVCAccessDB.Controllers
                     mDTDetails.Add(new MDTDetails { MDTId = Convert.ToInt32(mdtdetail["MdtId"].ToString()), MDTDate = Convert.ToDateTime(mdtdetail["MdtDate"].ToString()) });
                 }
             }
-
+                myConnection.Close();
                 return View(model);
+        }
+        catch(Exception ex)
+            {
+                return View("Error");
+}
         }
 
         [HttpPost]
@@ -134,7 +140,7 @@ namespace MVCAccessDB.Controllers
                     return View("Error");
                 }
 
-
+                conn.Close();
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
