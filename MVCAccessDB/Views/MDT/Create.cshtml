@@ -1,4 +1,5 @@
 ﻿@model MVCAccessDB.Models.MDTModel
+@using MVCAccessDB.Models;
 @{
     ViewBag.Title = "Add MDT Epsiode";
 }
@@ -74,27 +75,7 @@
                 </div>
             </div>
         </div>
-        @*<div class="row">
-            <div class="col-md-4"><div class="col-md-6"><b>Hospital No: </b></div><div class="col-md-6">@Model.Patient.HospitalNo</div></div>
-            <div class="col-md-4"><div class="col-md-6"><b>Date Of Birth: </b></div><div class="col-md-6">@Model.Patient.DateofBirth.ToShortDateString()</div></div>
-            <div class="col-md-4"><div class="col-md-6"><b>GP Name: </b></div><div class="col-md-6">@Model.Patient.GpName</div></div>
-        </div>
-        <div class="row">
-            <div class="col-md-4"><div class="col-md-6"><b>NHS No: </b></div><div class="col-md-6">@Model.Patient.NhsNo</div></div>
-            <div class="col-md-4"><div class="col-md-6"><b>Address: </b></div><div class="col-md-6">@Model.Patient.AddressLine1</div></div>
-            <div class="col-md-4"><div class="col-md-6"><b>GP Address: </b></div><div class="col-md-6">@Model.Patient.GpAddressLine1</div></div>
-
-        </div>
-        <div class="row">
-            <div class="col-md-4"><div class="col-md-6"><b>First Name: </b></div><div class="col-md-6">@Model.Patient.FirstName</div></div>
-            <div class="col-md-4"><div class="col-md-6"><b> </b></div><div class="col-md-6">@Model.Patient.AddressLine2 @Model.Patient.City</div></div>
-            <div class="col-md-4"><div class="col-md-6"><b></b></div><div class="col-md-6">@Model.Patient.GpAddressLine2 @Model.Patient.GpAddressLine2</div></div>
-        </div>
-        <div class="row">
-            <div class="col-md-4"><div class="col-md-6"><b>Surname: </b></div><div class="col-md-6">@Model.Patient.LastName</div></div>
-            <div class="col-md-4"><div class="col-md-6"><b>Postcode: </b></div><div class="col-md-6">@Model.Patient.Postcode</div></div>
-            <div class="col-md-4"><div class="col-md-6"><b>Postcode: </b></div><div class="col-md-6">@Model.Patient.GpPostcode</div></div>
-        </div>*@
+      
         <h3 style="color:#003366">Add MDT Episode</h3>
         @using (Html.BeginForm("Create", "MDT", FormMethod.Post))
     {
@@ -132,17 +113,26 @@
                     <a href="#tab_4" data-toggle="tab">Attendees  @DateTime.Now.ToShortDateString()</a>
                 </li>
             </ul>
-            <div class="form-horizontal">
+           
+            <div class="form-horizontal"  style="padding-top:20px">
                 <div class="tab-content">
                     <div class="tab-pane active" id="tab_1">
+
                         @Html.HiddenFor(model => model.MDTPatientId, Model.Patient.PatientId)
-                        @*<hr />*@
-                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                         <div class="form-group">
                             @Html.LabelFor(model => model.MDTDate, htmlAttributes: new { @class = "control-label col-md-2" })
                             <div class="col-md-10">
                                 @Html.EditorFor(model => model.MDTDate, new { htmlAttributes = new { @class = "date-picker" } })
                                 @Html.ValidationMessageFor(model => model.MDTDate, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Diagnosis, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(m => m.Diagnosis,
+                            new SelectList(Enum.GetValues(typeof(DiagnosisList))),
+                            "Select Diagnosis")
                             </div>
                         </div>
                     </div>
@@ -171,29 +161,29 @@
                             </div>
                         </div>
 
-                       
+
                     </div>
                     <div class="tab-pane fade" id="tab_4">
-                       
+
                         <div class="form-group">
                             <div class="col-md-offset-2 col-md-10">
                                 @for (var i = 0; i < Model.Users.Count(); i++)
                                 {
-                                <div>
-                                    @Html.HiddenFor(model => model.Users[i].UserId)
-                                    @Html.HiddenFor(model => model.Users[i].FullName)
-                                    @Html.CheckBoxFor(model => model.Users[i].Selected)
-                                    @Html.LabelFor(model => model.Users[i].Selected, Model.Users[i].FullName)
-                                </div>
+                                    <div>
+                                        @Html.HiddenFor(model => model.Users[i].UserId)
+                                        @Html.HiddenFor(model => model.Users[i].FullName)
+                                        @Html.CheckBoxFor(model => model.Users[i].Selected)
+                                        @Html.LabelFor(model => model.Users[i].Selected, Model.Users[i].FullName)
+                                    </div>
                                 }
                             </div>
-                                <div class="col-md-offset-2 col-md-10">
-                                    <input style="text-align: left; background-color:#003366" type="submit" value="Add" class="btn btn-primary pull-left" />
-                                </div>
+                            <div class="col-md-offset-2 col-md-10">
+                                <input style="text-align: left; background-color:#003366" type="submit" value="Add" class="btn btn-primary pull-left" />
                             </div>
                         </div>
-
                     </div>
+
+                </div>
             </div>
         </div>
         @*<div class="form-horizontal">

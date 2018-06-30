@@ -22,7 +22,8 @@ namespace MVCAccessDB.Models
         public int? RedirectFrom { get; set; }
         public IList<MDTDetails> MDTEpisode { get; set; }
         public IList<UserList> Users { get; set; }
-        
+        public DiagnosisList Diagnosis { get; set; }
+
         public MDTModel()
         {
             Patient = new PatientModel();
@@ -36,5 +37,11 @@ namespace MVCAccessDB.Models
         public int UserId { get; set; }
         public string FullName  { get; set; }
         public bool Selected { get; set; }
+    }
+
+    public enum DiagnosisList
+    {
+        Test1,
+        Test2
     }
 }
