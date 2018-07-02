@@ -17,6 +17,11 @@ namespace MVCAccessDB.Controllers
         {
             try
             {
+                HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+               
+                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                    return RedirectToAction("index", "Home");
+
                 IList<PatientModel> patients = new List<PatientModel>();
                 OleDbConnection myConnection = new OleDbConnection();
 
@@ -37,13 +42,9 @@ namespace MVCAccessDB.Controllers
                 var patientList = ds.Tables[0];
                 foreach (DataRow patient in patientList.Rows)
                 {
-                    // MDTDetails mDTDetails = new MDTDetails();
+                    
                     IList<MDTDetails> mDTDetails = new List<MDTDetails>();
-                    //var MdtDetails = db.MdtEpisodes.Where(x => x.MdtPatientId == patient.PatientId).OrderByDescending(x => x.MdtDate).ToList();
-                    //if (MdtDetails != null)
-                    //    foreach (var mdt in MdtDetails)
-                    //        mDTDetails.Add(new MDTDetails { MDTId = mdt.MdtId, MDTDate = mdt.MdtDate });
-
+                   
                     patients.Add(new PatientModel
                     {
                         FirstName = patient["FirstName"].ToString(),
@@ -60,7 +61,7 @@ namespace MVCAccessDB.Controllers
             catch
             {
                 return View("Error");
-               /// return view
+              
             }
            
         }
@@ -68,8 +69,13 @@ namespace MVCAccessDB.Controllers
         // GET: PatientInformation/Details/5
         public ActionResult Details(int? id = 0)
         {
-            try { 
-            MDTModel model = new MDTModel();
+            try {
+                HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+
+                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                    return RedirectToAction("index", "Home");
+
+                MDTModel model = new MDTModel();
                 if (id != null && id > 0)
                 {
 
@@ -148,8 +154,13 @@ namespace MVCAccessDB.Controllers
         // GET: PatientInformation/Create
         public ActionResult Create()
         {
-            try { 
-            PatientModel model = new PatientModel();
+            try {
+                HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+
+                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                    return RedirectToAction("index", "Home");
+
+                PatientModel model = new PatientModel();
             return View(model);
             }
             catch
@@ -164,6 +175,10 @@ namespace MVCAccessDB.Controllers
         {
             try
             {
+                HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+
+                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                    return RedirectToAction("index", "Home");
                 OleDbConnection conn = new OleDbConnection();
 
                 conn.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
@@ -176,13 +191,13 @@ namespace MVCAccessDB.Controllers
                 cmd.Connection = conn;
 
                 conn.Open();
-                HttpCookie myCookie = Request.Cookies["MyTestCookie"];
-                string userid = "1";
+              
+                int userid = 0;
                 // Read the cookie information and display it.
-                //if (myCookie != null)
-                //    userid =  myCookie.Value;
-                //else
-                //    return RedirectToAction("index", "Home");
+                if (myCookie["userid"] != null)
+                    userid = Convert.ToInt32(myCookie["userid"]); //mycookie.value
+                else
+                    return RedirectToAction("index", "Home");
 
                 if (conn.State == ConnectionState.Open)
                 {
@@ -237,6 +252,11 @@ namespace MVCAccessDB.Controllers
         {
             try
             {
+                HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+
+                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                    return RedirectToAction("index", "Home");
+
                 PatientModel model = new PatientModel();
                 if (id != null && id > 0)
                 {
@@ -298,7 +318,10 @@ namespace MVCAccessDB.Controllers
             try
             {
                 // TODO: Add update logic here
+                HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
+                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                    return RedirectToAction("index", "Home");
                 return RedirectToAction("Index");
             }
             catch
@@ -310,6 +333,10 @@ namespace MVCAccessDB.Controllers
         // GET: PatientInformation/Delete/5
         public ActionResult Delete(int id)
         {
+            HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+
+            if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                return RedirectToAction("index", "Home");
             return View();
         }
 
@@ -319,6 +346,10 @@ namespace MVCAccessDB.Controllers
         {
             try
             {
+                HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+
+                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                    return RedirectToAction("index", "Home");
                 // TODO: Add delete logic here
 
                 return RedirectToAction("Index");
@@ -332,8 +363,13 @@ namespace MVCAccessDB.Controllers
         [HttpPost]
         public ActionResult Filter(FormCollection formCollection)
         {
-            try { 
-            var filterBy = formCollection.Get("txtFilter");
+            try {
+                HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+
+                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                    return RedirectToAction("index", "Home");
+
+                var filterBy = formCollection.Get("txtFilter");
                 // OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
                 OleDbConnection myConnection = new OleDbConnection();
 

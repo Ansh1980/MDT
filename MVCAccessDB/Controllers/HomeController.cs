@@ -20,14 +20,13 @@ namespace MVCAccessDB.Controllers
         {
             try
             {
-                // OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
                 OleDbConnection myConnection = new OleDbConnection();
                 myConnection.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
 
                 myConnection.Open();
                 OleDbDataAdapter adapter;
 
-                OleDbCommand cmd = new OleDbCommand("Select * FROM [user] where IsActive = 1 and FirstName = " + model.FirstName, myConnection);
+                OleDbCommand cmd = new OleDbCommand("Select * FROM [user] where IsActive = true and Username = '" + model.UserName + "'", myConnection);
                 adapter = new OleDbDataAdapter(cmd);
                 DataSet ds = new DataSet("MainDataSet");
 
@@ -40,9 +39,10 @@ namespace MVCAccessDB.Controllers
                     HttpCookie myCookie = new HttpCookie("MDTuserCookie");
                     DateTime now = DateTime.Now;
                     // Set the cookie expiration date.
-                    myCookie.Expires = now.AddHours(1); // For a cookie to effectively never expire
+                    myCookie.Expires = now.AddHours(4); // For a cookie to effectively never expire
 
                     // Add the cookie.
+                  
                     Response.Cookies.Add(myCookie);
                   
                     foreach (DataRow user in userlist.Rows)
@@ -56,16 +56,17 @@ namespace MVCAccessDB.Controllers
 
                     });
                         // Set the cookie value.
-                        myCookie.Value = user["UserId"].ToString();
+                        myCookie.Values["userid"] = user["UserId"].ToString();
+                        myCookie.Values["isadmin"] = user["IsAdmin"].ToString();
                         break;
                     }
                 myConnection.Close();
                  
 
                 }
-                return View(users);
+                return RedirectToAction("index", "patient");
             }
-            catch
+            catch (Exception ex)
             {
                 return View("Error");
             }

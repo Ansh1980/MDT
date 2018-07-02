@@ -18,7 +18,11 @@ namespace MVCAccessDB.Controllers
         {
             try
             {
-                // OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
+                HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+
+                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                    return RedirectToAction("index", "Home");
+
                 OleDbConnection myConnection = new OleDbConnection();
                 myConnection.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
 
@@ -39,7 +43,9 @@ namespace MVCAccessDB.Controllers
                         FirstName = user["FirstName"].ToString(),
                         Lastname = user["Lastname"].ToString(),
                         UserId = Convert.ToInt32(user["UserId"].ToString()),
-                        IsActive = Convert.ToBoolean(user["IsAdmin"].ToString())
+                        IsAdmin = Convert.ToBoolean(user["IsAdmin"].ToString()),
+                        UserName = user["Username"].ToString(),
+                        IsActive = Convert.ToBoolean(user["IsActive"].ToString()),
 
                     });
                 }
@@ -70,15 +76,16 @@ namespace MVCAccessDB.Controllers
         {
             try
             {
+                HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+
+                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                    return RedirectToAction("index", "Home");
+
                 OleDbConnection conn = new OleDbConnection();
 
                 conn.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
-                    //@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb";
-
-                //String Firstname = "Ansh2";
-                //String lastname = "Shri2";
-
-                OleDbCommand cmd = new OleDbCommand("INSERT into [user] (Firstname, LastName, IsAdmin) Values(@FirstName, @LastName, @IsAdmin)");
+             
+                OleDbCommand cmd = new OleDbCommand("INSERT into [user] (Firstname, LastName,IsActive, IsAdmin, DateCreated, Username) Values(@FirstName, @LastName,@IsActive, @IsAdmin, @DateCreated, @Username)");
                 cmd.Connection = conn;
 
                 conn.Open();
@@ -87,12 +94,14 @@ namespace MVCAccessDB.Controllers
                 {
                     cmd.Parameters.Add("@FirstName", OleDbType.VarChar).Value = model.FirstName;
                     cmd.Parameters.Add("@LastName", OleDbType.VarChar).Value = model.Lastname;
+                    cmd.Parameters.Add("@IsActive", OleDbType.Boolean).Value = true;
                     cmd.Parameters.Add("@IsAdmin", OleDbType.Boolean).Value = model.IsAdmin;
+                    cmd.Parameters.Add("@DateCreated", OleDbType.Date).Value = DateTime.Now;
+                    cmd.Parameters.Add("@Username", OleDbType.VarChar).Value = model.UserName.ToString();
 
                     try
                     {
                         cmd.ExecuteNonQuery();
-                        //  MessageBox.Show("Data Added");
                         conn.Close();
                     }
                     catch (OleDbException ex)

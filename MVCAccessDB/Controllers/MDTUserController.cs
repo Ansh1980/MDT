@@ -17,6 +17,11 @@ namespace MVCAccessDB.Controllers
         {
             try
             {
+                HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+
+                if (myCookie["userid"] == null )
+                    return RedirectToAction("index", "Home");
+
                 IList<PatientModel> patients = new List<PatientModel>();
                 OleDbConnection myConnection = new OleDbConnection();
 
@@ -66,6 +71,13 @@ namespace MVCAccessDB.Controllers
 
         public ActionResult Details(int? id = 0) //Patient Id
         {
+            try
+            {
+                HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+
+                if (myCookie["userid"] == null )
+                    return RedirectToAction("index", "Home");
+          
             MDTModel model = new MDTModel();
             if (id != null && id > 0)
             {
@@ -162,11 +174,19 @@ namespace MVCAccessDB.Controllers
                 return View(model);
             }
             return View(model);
+            }
+            catch { return View("Error"); }
         }
 
         public ActionResult MDTDetails(int? id = 0) //MDT Id
         {
-            MDTModel model = new MDTModel();
+            try
+            {
+                HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+
+                if (myCookie["userid"] == null )
+                    return RedirectToAction("index", "Home");
+                MDTModel model = new MDTModel();
             if (id != null && id > 0)
             {
                 OleDbDataAdapter adapter;
@@ -263,5 +283,8 @@ namespace MVCAccessDB.Controllers
             }
             return View(model);
         }
+            catch { return View("Error");
+    }
+}
     }
 }
