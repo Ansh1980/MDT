@@ -13,7 +13,9 @@ namespace MVCAccessDB.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            UserModel model = new UserModel();
+            model.Error = "";
+            return View(model);
         }
         [HttpPost]
         public ActionResult Index(UserModel model)
@@ -32,7 +34,7 @@ namespace MVCAccessDB.Controllers
 
                 adapter.Fill(ds);
                 IList<UserModel> users = new List<UserModel>();
-                if (ds.Tables.Count > 0)
+                if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                 { 
                
                 var userlist = ds.Tables[0];
@@ -52,7 +54,7 @@ namespace MVCAccessDB.Controllers
                         FirstName = user["FirstName"].ToString(),
                         Lastname = user["Lastname"].ToString(),
                         UserId = Convert.ToInt32(user["UserId"].ToString()),
-                        IsActive = Convert.ToBoolean(user["IsAdmin"].ToString())
+                        IsAdmin = Convert.ToBoolean(user["IsAdmin"].ToString())
 
                     });
                         // Set the cookie value.
@@ -61,10 +63,14 @@ namespace MVCAccessDB.Controllers
                         break;
                     }
                 myConnection.Close();
-                 
-
+                    if(users[0].IsAdmin)
+                    return RedirectToAction("index", "patient");
+                    else
+                     return RedirectToAction("index", "MDTuser");
                 }
-                return RedirectToAction("index", "patient");
+                model.Error = "Incorrect Username/Password";
+                return View(model);
+                
             }
             catch (Exception ex)
             {

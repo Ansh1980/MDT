@@ -161,7 +161,8 @@ namespace MVCAccessDB.Controllers
                     return RedirectToAction("index", "Home");
 
                 PatientModel model = new PatientModel();
-            return View(model);
+               
+                return View(model);
             }
             catch
             {

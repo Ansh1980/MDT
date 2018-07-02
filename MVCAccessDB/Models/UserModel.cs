@@ -21,5 +21,6 @@ namespace MVCAccessDB.Models
         public bool IsAdmin { get; set; } // IsAdmin
         public bool IsActive { get; set; } // IsActive
         public int UserId { get; set; } // IsActive
+        public string Error { get; set; } // IsActive
     }
 }
