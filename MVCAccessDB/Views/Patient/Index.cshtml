@@ -87,42 +87,31 @@
 
             @foreach (var item in Model)
             {
-                <tr>
-
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FirstName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LastName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.NhsNo)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.HospitalNo)
-                    </td>
-                    <td>
-                        @Html.ActionLink("Add Episode", "Create", "MDT", new { id = item.PatientId }, null)
-                    </td>
-                    <td>
-                        @if (item.MDTEpisode != null && item.MDTEpisode.Count > 0)
-                        {
-                            foreach (var mdt in item.MDTEpisode)
-                            {
-                                <p>
-                                    @Html.ActionLink("Episode " + mdt.MDTDate.ToShortDateString(), "Details", "MDT", new { id = mdt.MDTId }, null) <span>|</span>
-                                    @Html.ActionLink("Delete Episode", "Delete", "MDT", new { id = mdt.MDTId }, null)
-                                </p>
-                            }
-
-                        }
-                    </td>
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.PatientId }) |
-                        @Html.ActionLink("Details", "Details", new { id = item.PatientId }) |
-                        @Html.ActionLink("Delete", "Delete", new { id = item.PatientId })
-                    </td>
-                </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NhsNo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HospitalNo)
+                </td>
+                <td>
+                    @Html.ActionLink("Add Episode", "Create", "MDT", new { id = item.PatientId }, null)
+                </td>
+                <td>
+                    @Html.ActionLink("View MDT", "MDTDetails", "MDT", new { id = item.PatientId }, null)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.PatientId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.PatientId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.PatientId })
+                </td>
+            </tr>
             }
 
         </table>

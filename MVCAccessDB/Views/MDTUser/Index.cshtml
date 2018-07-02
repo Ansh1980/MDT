@@ -60,12 +60,9 @@
                 </th>
               
                 <th>
-                    View MDT Episode
+                   
                 </th>
-                <th>
-                    Patient Details
-                </th>
-                <th></th>
+                               
             </tr>
             @foreach (var item in Model)
             {
@@ -82,23 +79,10 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.HospitalNo)
                     </td>
-                 
-                    <td>
-                        @if (item.MDTEpisode != null && item.MDTEpisode.Count > 0)
-                        {
-                            foreach (var mdt in item.MDTEpisode)
-                            {
-                                <p>
-                                    @Html.ActionLink("Episode " + mdt.MDTDate.ToShortDateString(), "Details", "MDT", new { id = mdt.MDTId }, null) <span>|</span>
-                                   
-                                </p>
-                            }
-
-                        }
-                    </td>
+                  
                     <td>
                        
-                        @Html.ActionLink("MDT Details", "Details", new { id = item.PatientId }) |
+                        @Html.ActionLink("View MDT", "Details", new { id = item.PatientId }) 
                       
                     </td>
                 </tr>

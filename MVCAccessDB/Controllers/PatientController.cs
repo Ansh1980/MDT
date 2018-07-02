@@ -233,9 +233,62 @@ namespace MVCAccessDB.Controllers
         }
 
         // GET: PatientInformation/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int? id)
         {
-            return View();
+            try
+            {
+                PatientModel model = new PatientModel();
+                if (id != null && id > 0)
+                {
+
+                    OleDbConnection myConnection = new OleDbConnection();
+
+                    myConnection.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
+                    myConnection.Open();
+
+                    //var datT = myConnection.GetSchema("user");
+                    OleDbCommand cmd = new OleDbCommand("Select * FROM [Patient] where PatientId = " + id, myConnection);
+                    OleDbDataAdapter adapter;
+                    adapter = new OleDbDataAdapter(cmd);
+
+                    DataSet ds = new DataSet("MainDataSet");
+
+                    adapter.Fill(ds);
+                    // IList<UserModel> users = new List<UserModel>();
+                    if (ds.Tables.Count > 0)
+                    {
+                        var patientList = ds.Tables[0];
+                        foreach (DataRow patient in patientList.Rows)
+                        {
+                            
+                            model.FirstName = patient["FirstName"].ToString();
+                            model.LastName = patient["LastName"].ToString();
+                            model.NhsNo = patient["NhsNo"].ToString();
+                            model.PatientId = Convert.ToInt32(patient["PatientId"].ToString());
+                            model.AddressLine1 = patient["AddressLine1"].ToString();
+                            model.AddressLine2 = patient["AddressLine2"].ToString();
+                            model.City = patient["City"].ToString();
+                            model.DateofBirth = Convert.ToDateTime(patient["DateofBirth"].ToString());
+                            model.GpAddressLine1 = patient["GpAddressLine1"].ToString();
+                            model.GpAddressLine2 = patient["GpAddressLine2"].ToString();
+                            model.GpCity = patient["GpCity"].ToString();
+                            model.GpName = patient["GpName"].ToString();
+                            model.GpPostcode = patient["GpPostcode"].ToString();
+                            model.HospitalNo = patient["HospitalNo"].ToString();
+                            model.Postcode = patient["Postcode"].ToString();
+                            
+                        }
+                        myConnection.Close();
+                        return View(model);
+                    }
+                }
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                return View("Error");
+            }
         }
 
         // POST: PatientInformation/Edit/5

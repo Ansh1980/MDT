@@ -69,7 +69,7 @@
                     <a href="#tab_3" data-toggle="tab">Tab Header 3</a>
                 </li>
                 <li>
-                    <a href="#tab_4" data-toggle="tab">Attendees  @DateTime.Now.ToShortDateString()</a>
+                    <a href="#tab_4" data-toggle="tab">Attendees  @Model.MDTDate.ToShortDateString()</a>
                 </li>
             </ul>
             <div class="form-horizontal" style="padding-top:20px">
@@ -180,14 +180,7 @@
 
     </div>
 </div>
-<script type="text/javascript">
-    $(document).ready(function () {
-        $(function () {
-            // This will make every element with the class "date-picker" into a DatePicker element
-            $("#MDTDate").datepicker('setDate', new Date());
-        })
-    });
-</script>
+
 
 
 
