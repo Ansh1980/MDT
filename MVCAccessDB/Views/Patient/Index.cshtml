@@ -104,7 +104,7 @@
                     @Html.ActionLink("Add Episode", "Create", "MDT", new { id = item.PatientId }, null)
                 </td>
                 <td>
-                    @Html.ActionLink("View MDT", "MDTDetails", "MDT", new { id = item.PatientId }, null)
+                    @Html.ActionLink("View MDT", "Details", new { id = item.PatientId }, null)
                 </td>
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.PatientId }) |

@@ -69,7 +69,8 @@ namespace MVCAccessDB.Controllers
         // GET: PatientInformation/Details/5
         public ActionResult Details(int? id = 0)
         {
-            try {
+            try
+            {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
                 if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
@@ -95,56 +96,92 @@ namespace MVCAccessDB.Controllers
                     DataSet ds = new DataSet("MainDataSet");
 
                     adapter.Fill(ds);
-                   // IList<UserModel> users = new List<UserModel>();
-                    if(ds.Tables.Count > 0) { 
-                    var patientList = ds.Tables[0];
-                    foreach (DataRow patient in patientList.Rows)
+                    // IList<UserModel> users = new List<UserModel>();
+                    if (ds.Tables.Count > 0)
                     {
-                        //if (patient != null)
-                        //{
-                        model.Patient.FirstName = patient["FirstName"].ToString();
-                        model.Patient.LastName = patient["LastName"].ToString();
-                        model.Patient.NhsNo = patient["NhsNo"].ToString();
-                        model.Patient.PatientId = Convert.ToInt32(patient["PatientId"].ToString());
-                        model.Patient.AddressLine1 = patient["AddressLine1"].ToString();
-                        model.Patient.AddressLine2 = patient["AddressLine2"].ToString();
-                        model.Patient.City = patient["City"].ToString();
-                        model.Patient.DateofBirth = Convert.ToDateTime(patient["DateofBirth"].ToString());
-                        model.Patient.GpAddressLine1 = patient["GpAddressLine1"].ToString();
-                        model.Patient.GpAddressLine2 = patient["GpAddressLine2"].ToString();
-                        model.Patient.GpCity = patient["GpCity"].ToString();
-                        model.Patient.GpName = patient["GpName"].ToString();
-                        model.Patient.GpPostcode = patient["GpPostcode"].ToString();
-                        model.Patient.HospitalNo = patient["HospitalNo"].ToString();
-                        model.Patient.Postcode = patient["Postcode"].ToString();
-                        // }
-                        //OleDbCommand Mdtcmd = new OleDbCommand("Select * FROM [MdtEpisodes] where Id = " + id, myConnection);
-                        //OleDbDataAdapter adapter;
-                        //adapter = new OleDbDataAdapter(cmd);
+                        var patientList = ds.Tables[0];
+                        foreach (DataRow patient in patientList.Rows)
+                        {
+                            //if (patient != null)
+                            //{
+                            model.Patient.FirstName = patient["FirstName"].ToString();
+                            model.Patient.LastName = patient["LastName"].ToString();
+                            model.Patient.NhsNo = patient["NhsNo"].ToString();
+                            model.Patient.PatientId = Convert.ToInt32(patient["PatientId"].ToString());
+                            model.Patient.AddressLine1 = patient["AddressLine1"].ToString();
+                            model.Patient.AddressLine2 = patient["AddressLine2"].ToString();
+                            model.Patient.City = patient["City"].ToString();
+                            model.Patient.DateofBirth = Convert.ToDateTime(patient["DateofBirth"].ToString());
+                            model.Patient.GpAddressLine1 = patient["GpAddressLine1"].ToString();
+                            model.Patient.GpAddressLine2 = patient["GpAddressLine2"].ToString();
+                            model.Patient.GpCity = patient["GpCity"].ToString();
+                            model.Patient.GpName = patient["GpName"].ToString();
+                            model.Patient.GpPostcode = patient["GpPostcode"].ToString();
+                            model.Patient.HospitalNo = patient["HospitalNo"].ToString();
+                            model.Patient.Postcode = patient["Postcode"].ToString();
 
-                        //var mdt = db.MdtEpisodes.OrderByDescending(x => x.MdtDate).FirstOrDefault(x => x.MdtPatientId == id);
-                        //if (mdt != null)
-                        //{
-                        //    model.Comorbidities = mdt.Comorbidities;
-                        //    model.History = mdt.History;
-                        //    model.MDTDate = mdt.MdtDate;
-                        //    model.MDTDiscussion = mdt.MdtDiscussion;
-                        //    model.MdtId = mdt.MdtId;
-                        //}
-                        //IList<MDTDetails> mDTDetails = new List<MDTDetails>();
-                        //var MdtDetails = db.MdtEpisodes.Where(x => x.MdtPatientId == patient.PatientId).OrderByDescending(x => x.MdtDate).ToList();
-                        //if (MdtDetails != null)
-                        //    foreach (var mdtdetail in MdtDetails)
-                        //        mDTDetails.Add(new MDTDetails { MDTId = mdtdetail.MdtId, MDTDate = mdtdetail.MdtDate });
-                        //model.MDTEpisode = mDTDetails;
+                            cmd = new OleDbCommand("Select * FROM [MDT] where MDTPatientId = " + id + " order by MDTDate Desc", myConnection);
+                            adapter = new OleDbDataAdapter(cmd);
+                            ds = new DataSet("MainDataSet");
+
+                            adapter.Fill(ds);
+                            //  IList<MDTModel> mdts = new List<MDTModel>();
+                            if (ds.Tables.Count > 0)
+                            {
+                                var mdtlist = ds.Tables[0];
+                                // var userList = db.Users.ToList();
+                                foreach (DataRow mdt in mdtlist.Rows)
+                                {
+                                    model.Comorbidities = mdt["Comorbidities"].ToString();
+                                    model.History = mdt["History"].ToString();
+                                    model.MDTDate = Convert.ToDateTime(mdt["MdtDate"].ToString());
+                                    model.MDTDiscussion = mdt["MdtDiscussion"].ToString();
+                                    model.MdtId = Convert.ToInt32(mdt["MdtId"].ToString());
+                                    model.MDTPatientId = Convert.ToInt32(mdt["MDTPatientId"].ToString());
+                                    // users.Add(new UserModel
+                                    break;
+                                }
+
+                            }
+                            cmd = new OleDbCommand("Select * FROM [MDTUser] where MDTId = " + model.MdtId, myConnection);
+                            adapter = new OleDbDataAdapter(cmd);
+                            ds = new DataSet("MainDataSet");
+                            adapter.Fill(ds);
+                            if (ds.Tables.Count > 0)
+                            {
+                                var userlist = ds.Tables[0];
+                                // var userList = db.Users.ToList();
+                                foreach (DataRow userdetail in userlist.Rows)
+                                {
+                                    model.Users.Add(new UserList { UserId = Convert.ToInt32(userdetail["UserId"].ToString()), FullName = userdetail["FullName"].ToString(), Selected = true });
+                                }
+                            }
+
+                            cmd = new OleDbCommand("Select * FROM [MDT] where MDTPatientId = " + model.MDTPatientId + " order by MDTDate desc", myConnection);
+
+                            adapter = new OleDbDataAdapter(cmd);
+
+                            ds = new DataSet("MainDataSet");
+
+                            adapter.Fill(ds);
+                            if (ds.Tables.Count > 0)
+                            {
+                                var mdtList = ds.Tables[0];
+                                foreach (DataRow mdtdetail in mdtList.Rows)
+                                {
+
+                                    model.MDTEpisode.Add(new MDTDetails { MDTId = Convert.ToInt32(mdtdetail["MdtId"].ToString()), MDTDate = Convert.ToDateTime(mdtdetail["MdtDate"].ToString()) });
+                                }
+                            }
+                            myConnection.Close();
+                            return View(model);
+                        }
                     }
-                        myConnection.Close();
-                        return View(model);
+
+                    return View(model);
                 }
-            }
-               
                 return View(model);
-        }
+            }
             catch (Exception ex)
             {
                 return View("Error");
@@ -314,18 +351,79 @@ namespace MVCAccessDB.Controllers
 
         // POST: PatientInformation/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(PatientModel model)
         {
             try
             {
-                // TODO: Add update logic here
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
                 if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
+                OleDbConnection conn = new OleDbConnection();
+
+                conn.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
+                
+
+                OleDbCommand cmd = new OleDbCommand("update [Patient] set Firstname = @Firstname, " +
+                    "Lastname = @Lastname, HospitalNo = @HospitalNo,  NhsNo= @NhsNo,  DateofBirth= @DateofBirth, AddressLine1 = @AddressLine1, AddressLine2 = @AddressLine2,  City = @City," +
+                    " Postcode = @Postcode ,GpCity = @GpCity, " +
+                    "GpName = @GpName, GpAddressLine1 = @GpAddressLine1, GpAddressLine2 = @GpAddressLine2, GpPostcode = @GpPostcode" +
+                   
+                    " where PatientId = " + model.PatientId);
+                    
+                cmd.Connection = conn;
+
+                conn.Open();
+
+                int userid = 0;
+                // Read the cookie information and display it.
+                if (myCookie["userid"] != null)
+                    userid = Convert.ToInt32(myCookie["userid"]); //mycookie.value
+                else
+                    return RedirectToAction("index", "Home");
+
+                if (conn.State == ConnectionState.Open)
+                {
+                    cmd.Parameters.Add("@Firstname", OleDbType.VarChar).Value = model.FirstName;
+                    cmd.Parameters.Add("@Lastname", OleDbType.VarChar).Value = model.LastName;
+                    cmd.Parameters.Add("@HospitalNo", OleDbType.VarChar).Value = model.HospitalNo;
+                    cmd.Parameters.Add("@NhsNo", OleDbType.VarChar).Value = model.NhsNo;
+                    cmd.Parameters.Add("@DateofBirth", OleDbType.Date).Value = model.DateofBirth;
+                    cmd.Parameters.Add("@AddressLine1", OleDbType.VarChar).Value = model.AddressLine1;
+                    cmd.Parameters.Add("@AddressLine2", OleDbType.VarChar).Value = model.AddressLine2;
+                    cmd.Parameters.Add("@City", OleDbType.VarChar).Value = model.City;
+                    cmd.Parameters.Add("@Postcode", OleDbType.VarChar).Value = model.Postcode;
+                    cmd.Parameters.Add("@GpCity", OleDbType.VarChar).Value = model.GpCity;
+                    cmd.Parameters.Add("@GpName", OleDbType.VarChar).Value = model.GpName;
+                    cmd.Parameters.Add("@GpAddressLine1", OleDbType.VarChar).Value = model.GpAddressLine1;
+                    cmd.Parameters.Add("@GpAddressLine2", OleDbType.VarChar).Value = model.GpAddressLine2;
+                    cmd.Parameters.Add("@GpPostcode", OleDbType.VarChar).Value = model.GpPostcode;
+                    //cmd.Parameters.Add("@DateCreated", OleDbType.Date).Value = DateTime.Now;
+                    ////  cmd.Parameters.Add("@RowGuid", OleDbType.Guid).Value = Guid.NewGuid();
+                    //cmd.Parameters.Add("@UserId", OleDbType.Integer).Value = userid;
+
+                    try
+                    {
+                        cmd.ExecuteNonQuery();
+                        //  MessageBox.Show("Data Added");
+                        conn.Close();
+                    }
+                    catch (OleDbException ex)
+                    {
+                        string str = ex.ToString();
+                        conn.Close();
+                        return View("Error");
+                    }
+                }
+                else
+                {
+                    return View("Error");
+                }
+
+
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
                 return View("Error");
             }

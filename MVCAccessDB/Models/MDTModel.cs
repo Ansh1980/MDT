@@ -29,6 +29,7 @@ namespace MVCAccessDB.Models
             Patient = new PatientModel();
             MDTEpisode = new List<MDTDetails>();
             Users = new List<UserList>();
+           // Diagnosis = new DiagnosisList(DiagnosisList.)
         }
     }
 
