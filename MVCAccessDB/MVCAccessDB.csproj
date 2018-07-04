@@ -259,6 +259,7 @@
     <Content Include="Views\MDTUser\Details.cshtml" />
     <Content Include="Views\MDTUser\MDTDetails.cshtml" />
     <Content Include="Views\Patient\Edit.cshtml" />
+    <Content Include="Views\User\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -29,7 +29,7 @@ namespace MVCAccessDB.Models
             Patient = new PatientModel();
             MDTEpisode = new List<MDTDetails>();
             Users = new List<UserList>();
-           // Diagnosis = new DiagnosisList(DiagnosisList.)
+            Diagnosis = DiagnosisList.Select;
         }
     }
 
@@ -42,7 +42,8 @@ namespace MVCAccessDB.Models
 
     public enum DiagnosisList
     {
-        Test1,
-        Test2
+        Select = 0,
+        Test1 = 1,
+        Test2 = 2
     }
 }
