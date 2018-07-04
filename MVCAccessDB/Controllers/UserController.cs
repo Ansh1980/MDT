@@ -134,7 +134,7 @@ namespace MVCAccessDB.Controllers
                 if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
 
-                
+                UserModel model = new UserModel();
                 if (id != null && id > 0)
                 {
 
@@ -158,19 +158,18 @@ namespace MVCAccessDB.Controllers
                     // var userList = db.Users.ToList();
                     foreach (DataRow user in userlist.Rows)
                     {
-                        users.Add(new UserModel
-                        {
-                            FirstName = user["FirstName"].ToString(),
-                            Lastname = user["Lastname"].ToString(),
-                            UserId = Convert.ToInt32(user["UserId"].ToString()),
-                            IsAdmin = Convert.ToBoolean(user["IsAdmin"].ToString()),
-                            UserName = user["Username"].ToString(),
-                            IsActive = Convert.ToBoolean(user["IsActive"].ToString()),
 
-                        });
+                        model.FirstName = user["FirstName"].ToString();
+                        model.Lastname = user["Lastname"].ToString();
+                        model.UserId = Convert.ToInt32(user["UserId"].ToString());
+                        model.IsAdmin = Convert.ToBoolean(user["IsAdmin"].ToString());
+                        model.UserName = user["Username"].ToString();
+                        model.IsActive = Convert.ToBoolean(user["IsActive"].ToString());
+
+                        
                     }
                     myConnection.Close();
-                        return View(users);
+                        return View(model);
                     }
                // }
 

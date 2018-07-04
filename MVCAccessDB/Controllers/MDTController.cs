@@ -461,5 +461,126 @@ namespace MVCAccessDB.Controllers
                 return RedirectToAction("index", "Home");
             return View();
         }
+
+        // GET: PatientInformation/Edit/5
+        public ActionResult Edit(int? id)
+        {
+            try
+            {
+                HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+
+                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                    return RedirectToAction("index", "Home");
+
+                MDTModel model = new MDTModel();
+                if (id != null && id > 0)
+                {
+
+                    OleDbConnection myConnection = new OleDbConnection();
+
+                    myConnection.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
+                    myConnection.Open();
+
+                    //var datT = myConnection.GetSchema("user");
+                    OleDbCommand cmd = new OleDbCommand("Select * FROM [MDT] where MDTId = " + id, myConnection);
+                    OleDbDataAdapter adapter;
+                    adapter = new OleDbDataAdapter(cmd);
+
+                    DataSet ds = new DataSet("MainDataSet");
+
+                    adapter = new OleDbDataAdapter(cmd);
+
+                    adapter.Fill(ds);
+                    IList<UserModel> users = new List<UserModel>();
+                    var userlist = ds.Tables[0];
+                    // var userList = db.Users.ToList();
+                    foreach (DataRow user in userlist.Rows)
+                    {
+
+                        model.FirstName = user["FirstName"].ToString();
+                        model.Lastname = user["Lastname"].ToString();
+                        model.UserId = Convert.ToInt32(user["UserId"].ToString());
+                        model.IsAdmin = Convert.ToBoolean(user["IsAdmin"].ToString());
+                        model.UserName = user["Username"].ToString();
+                        model.IsActive = Convert.ToBoolean(user["IsActive"].ToString());
+
+
+                    }
+                    myConnection.Close();
+                    return View(model);
+                }
+                // }
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                return View("Error");
+            }
+        }
+
+        // POST: PatientInformation/Edit/5
+        [HttpPost]
+        public ActionResult Edit(UserModel model)
+        {
+            try
+            {
+                HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+
+                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                    return RedirectToAction("index", "Home");
+                OleDbConnection conn = new OleDbConnection();
+
+                conn.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
+
+
+                OleDbCommand cmd = new OleDbCommand("update [User] set Firstname = @Firstname, " +
+                    "Lastname = @Lastname, IsAdmin = @IsAdmin,  Username= @Username" +
+                    " where UserId = " + model.UserId);
+
+                cmd.Connection = conn;
+
+                conn.Open();
+
+                int userid = 0;
+                // Read the cookie information and display it.
+                if (myCookie["userid"] != null)
+                    userid = Convert.ToInt32(myCookie["userid"]); //mycookie.value
+                else
+                    return RedirectToAction("index", "Home");
+
+                if (conn.State == ConnectionState.Open)
+                {
+                    cmd.Parameters.Add("@Firstname", OleDbType.VarChar).Value = model.FirstName;
+                    cmd.Parameters.Add("@Lastname", OleDbType.VarChar).Value = model.Lastname;
+                    cmd.Parameters.Add("@IsAdmin", OleDbType.Boolean).Value = model.IsAdmin;
+                    cmd.Parameters.Add("@Username", OleDbType.VarChar).Value = model.UserName;
+
+
+                    try
+                    {
+                        cmd.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                    catch (OleDbException ex)
+                    {
+                        string str = ex.ToString();
+                        conn.Close();
+                        return View("Error");
+                    }
+                }
+                else
+                {
+                    return View("Error");
+                }
+
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return View("Error");
+            }
+        }
     }
 }
