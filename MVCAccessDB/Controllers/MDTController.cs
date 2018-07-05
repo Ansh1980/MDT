@@ -491,18 +491,18 @@ namespace MVCAccessDB.Controllers
                     adapter = new OleDbDataAdapter(cmd);
 
                     adapter.Fill(ds);
-                    IList<UserModel> users = new List<UserModel>();
-                    var userlist = ds.Tables[0];
+                    IList<MDTModel> users = new List<MDTModel>();
+                    var mdtlist = ds.Tables[0];
                     // var userList = db.Users.ToList();
-                    foreach (DataRow user in userlist.Rows)
+                    foreach (DataRow user in mdtlist.Rows)
                     {
 
-                        model.FirstName = user["FirstName"].ToString();
-                        model.Lastname = user["Lastname"].ToString();
-                        model.UserId = Convert.ToInt32(user["UserId"].ToString());
-                        model.IsAdmin = Convert.ToBoolean(user["IsAdmin"].ToString());
-                        model.UserName = user["Username"].ToString();
-                        model.IsActive = Convert.ToBoolean(user["IsActive"].ToString());
+                        model.Comorbidities = user["Comorbidities"].ToString();
+                        model.History = user["History"].ToString();
+                        model.MDTDate = Convert.ToDateTime(user["MDTDate"].ToString());
+                        model.MDTDiscussion = user["MDTDiscussion"].ToString();
+                       // model.Diagnosis = (DiagnosisList)user["MDTEpisode"].ToString();
+                        model.MdtId = Convert.ToInt32(user["MDTId"].ToString());
 
 
                     }
@@ -521,7 +521,7 @@ namespace MVCAccessDB.Controllers
 
         // POST: PatientInformation/Edit/5
         [HttpPost]
-        public ActionResult Edit(UserModel model)
+        public ActionResult Edit(MDTModel model)
         {
             try
             {
@@ -533,10 +533,9 @@ namespace MVCAccessDB.Controllers
 
                 conn.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
 
-
-                OleDbCommand cmd = new OleDbCommand("update [User] set Firstname = @Firstname, " +
-                    "Lastname = @Lastname, IsAdmin = @IsAdmin,  Username= @Username" +
-                    " where UserId = " + model.UserId);
+                OleDbCommand cmd = new OleDbCommand("update [MDT] set Comorbidities = @Comorbidities, " +
+                    "History = @History, MDTDate = @MDTDate,  MDTDiscussion= @MDTDiscussion" +
+                    " where MDTId = " + model.MdtId);
 
                 cmd.Connection = conn;
 
@@ -551,10 +550,10 @@ namespace MVCAccessDB.Controllers
 
                 if (conn.State == ConnectionState.Open)
                 {
-                    cmd.Parameters.Add("@Firstname", OleDbType.VarChar).Value = model.FirstName;
-                    cmd.Parameters.Add("@Lastname", OleDbType.VarChar).Value = model.Lastname;
-                    cmd.Parameters.Add("@IsAdmin", OleDbType.Boolean).Value = model.IsAdmin;
-                    cmd.Parameters.Add("@Username", OleDbType.VarChar).Value = model.UserName;
+                    cmd.Parameters.Add("@Comorbidities", OleDbType.VarChar).Value = model.Comorbidities;
+                    cmd.Parameters.Add("@History", OleDbType.VarChar).Value = model.History;
+                    cmd.Parameters.Add("@MDTDate", OleDbType.Date).Value = model.MDTDate;
+                    cmd.Parameters.Add("@MDTDiscussion", OleDbType.VarChar).Value = model.MDTDiscussion;
 
 
                     try

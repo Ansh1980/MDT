@@ -77,7 +77,7 @@
                     Add MDT Episode
                 </th>
                 <th>
-                    View MDT Episode
+                    View/Edit MDT Episode
                 </th>
                 <th>
                     Patient Details
@@ -104,7 +104,7 @@
                     @Html.ActionLink("Add Episode", "Create", "MDT", new { id = item.PatientId }, null)
                 </td>
                 <td>
-                    @Html.ActionLink("View MDT", "Details", new { id = item.PatientId }, null)
+                    @Html.ActionLink("View/Edit MDT", "Details", new { id = item.PatientId }, null)
                 </td>
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.PatientId }) |
