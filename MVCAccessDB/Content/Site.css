@@ -37,3 +37,8 @@ textarea {
     .navbar-inverse .navbar-brand {
         color: #ffffff;
     }
+.divider {
+    width: 5px;
+    height: auto;
+    display: inline-block;
+}

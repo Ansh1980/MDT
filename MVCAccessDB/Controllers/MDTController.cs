@@ -228,7 +228,7 @@ namespace MVCAccessDB.Controllers
             //}
         }
 
-        public ActionResult Details(int? id = 0 , string type = null) //MDT Id
+        public ActionResult Details(int id = 0, string type = null) //MDT Id
         {
             try
             {
@@ -238,7 +238,7 @@ namespace MVCAccessDB.Controllers
                     return RedirectToAction("index", "Home");
 
                 MDTModel model = new MDTModel();
-                if (id != null && id > 0)
+                if ( id > 0)
                 {
                     OleDbDataAdapter adapter;
                     OleDbConnection myConnection = new OleDbConnection();
@@ -247,9 +247,12 @@ namespace MVCAccessDB.Controllers
                     myConnection.Open();
                     OleDbCommand cmd = new OleDbCommand();
                     if (type == null)
-                     cmd = new OleDbCommand("Select * FROM [MDT] where MDTId = " + id, myConnection); 
+                        cmd = new OleDbCommand("Select * FROM [MDT] where MDTId = " + id, myConnection);
                     else
-                      cmd = new OleDbCommand("Select * FROM [MDT] where MDTPatientId = " + id + " order by MDTDate Desc", myConnection); 
+                    {
+                        cmd = new OleDbCommand("Select * FROM [MDT] where MDTPatientId = " + id + " order by MDTDate Desc", myConnection);
+                        model.MDTPatientId = id;
+                    }
 
 
                     //OleDbCommand cmd = new OleDbCommand("Select MDT.* , User.FirstName, User.Lastname FROM [MDT] inner join MDTUser on MDTUser.MDTId = MDT.MDTId inner join USER" +
@@ -257,10 +260,10 @@ namespace MVCAccessDB.Controllers
                     //    " where MDT.MDTId = " + id, myConnection);
                     adapter = new OleDbDataAdapter(cmd);
                     DataSet ds = new DataSet("MainDataSet");
-
+                    
                     adapter.Fill(ds);
                     //  IList<MDTModel> mdts = new List<MDTModel>();
-                    if (ds.Tables.Count > 0)
+                    if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         var mdtlist = ds.Tables[0];
                         // var userList = db.Users.ToList();

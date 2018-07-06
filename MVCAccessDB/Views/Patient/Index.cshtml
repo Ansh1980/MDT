@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Patients";
+    var filterVal = (string)ViewBag.FilterBy;
 }
 <div class="row">
     <div class="col-md-2" style="margin-top:20px">
@@ -27,7 +28,7 @@
                             <div class="panel-body">
                                 <div>
                                     <div class="col-sm-3">
-                                        @Html.TextBox("txtFilter", "", new { placeholder = "Name, NHS No, Hospital No", @class = "form-control input-sm" })
+                                        @Html.TextBox("txtFilter", filterVal, new { placeholder = "Lastname Firstname, NHS No, Hospital No", @class = "form-control input-sm" })
                                     </div>
                                     @*<div class="col-sm-3">
                                             @*<label class="filter-col" style="margin-right: 0;" for="pref-search">Location:</label>
@@ -39,7 +40,7 @@
                                         </div>*@
                                     <div class="col-sm-3">
                                         <input style="text-align: left; background-color:#003366" class="btn btn-primary pull-left" type="submit" value="Search" />
-
+                                        <div style="width: 5px; height: auto;"></div><button value="reset" class="btn btn-primary pull-left" style="background-color:#003366" onclick="clearFilter();">Reset</button>
                                     </div>
                                 </div>
                                 @*///form*@
@@ -51,10 +52,10 @@
             </div>
         }
 
-        <p>
-            @*@Html.ActionLink("Add New Patient", "Create")*@
-            <button class="btn btn-primary pull-left" style="background-color:#003366" onclick="location.href='@Url.Action("Create", "Patient")'">Add New Patient</button>
-        </p>
+            <p>
+                
+                <button class="btn btn-primary pull-left" style="background-color:#003366" onclick="location.href='@Url.Action("Create", "Patient")'">Add New Patient</button>
+            </p>
 
         @*<div style="padding-top:20px"> <span style="padding-top:20px"></span></div>*@
 
@@ -109,7 +110,7 @@
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.PatientId }) |
                     @Html.ActionLink("Details", "Details", new { id = item.PatientId }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.PatientId })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.PatientId }, new { onclick = "return confirm('Are you sure?');" })
                 </td>
             </tr>
             }
@@ -119,3 +120,14 @@
 
     </div>
 </div>
+<script>
+    var input = document.getElementById("txtFilter");
+    function clearFilter() {
+        
+        input.value = "";
+        return true;
+    }
+
+   
+
+</script>

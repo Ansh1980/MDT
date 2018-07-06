@@ -31,7 +31,7 @@ namespace MVCAccessDB.Controllers
                 myConnection.Open();
 
                 //var datT = myConnection.GetSchema("user");
-                OleDbCommand cmd = new OleDbCommand("Select * FROM [Patient]", myConnection);
+                OleDbCommand cmd = new OleDbCommand("Select * FROM [Patient] where Deleted = false", myConnection);
                 OleDbDataAdapter adapter;
                 adapter = new OleDbDataAdapter(cmd);
 

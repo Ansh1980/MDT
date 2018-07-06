@@ -21,7 +21,7 @@ namespace MVCAccessDB.Controllers
                
                 if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
-
+                ViewBag.FilterBy = "";
                 IList<PatientModel> patients = new List<PatientModel>();
                 OleDbConnection myConnection = new OleDbConnection();
 
@@ -31,7 +31,7 @@ namespace MVCAccessDB.Controllers
                 myConnection.Open();
 
                 //var datT = myConnection.GetSchema("user");
-                OleDbCommand cmd = new OleDbCommand("Select * FROM [Patient]", myConnection);
+                OleDbCommand cmd = new OleDbCommand("Select * FROM [Patient] where Deleted = false", myConnection);
                 OleDbDataAdapter adapter;
                 adapter = new OleDbDataAdapter(cmd);
                
@@ -430,18 +430,18 @@ namespace MVCAccessDB.Controllers
         }
 
         // GET: PatientInformation/Delete/5
-        public ActionResult Delete(int id)
-        {
-            HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
+        //public ActionResult Delete(int id)
+        //{
+        //    HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-            if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
-                return RedirectToAction("index", "Home");
-            return View();
-        }
+        //    if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
+        //        return RedirectToAction("index", "Home");
+        //    return View();
+        //}
 
         // POST: PatientInformation/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+       // [HttpPost]
+        public ActionResult Delete(int id)
         {
             try
             {
@@ -451,12 +451,52 @@ namespace MVCAccessDB.Controllers
                     return RedirectToAction("index", "Home");
                 // TODO: Add delete logic here
 
-                return RedirectToAction("Index");
+                OleDbConnection conn = new OleDbConnection();
+
+                conn.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
+
+
+                OleDbCommand cmd = new OleDbCommand("update [Patient] set Deleted = @Deleted "+
+
+                    " where PatientId = " + id);
+
+                cmd.Connection = conn;
+
+                conn.Open();
+
+                int userid = 0;
+                // Read the cookie information and display it.
+                if (myCookie["userid"] != null)
+                    userid = Convert.ToInt32(myCookie["userid"]); //mycookie.value
+                else
+                    return RedirectToAction("index", "Home");
+
+                if (conn.State == ConnectionState.Open)
+                {
+                    cmd.Parameters.Add("@Deleted", OleDbType.Boolean).Value = true;
+                    
+
+                    try
+                    {
+                        cmd.ExecuteNonQuery();
+                        //  MessageBox.Show("Data Added");
+                        conn.Close();
+                    }
+                    catch (OleDbException ex)
+                    {
+                        string str = ex.ToString();
+                        conn.Close();
+                        return View("Error");
+                    }
+                    return RedirectToAction("Index");
+                }
             }
             catch
             {
                 return View();
             }
+
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -469,14 +509,23 @@ namespace MVCAccessDB.Controllers
                     return RedirectToAction("index", "Home");
 
                 var filterBy = formCollection.Get("txtFilter");
+                ViewBag.FilterBy = filterBy;
+                if (filterBy == "")
+                   return RedirectToAction("index");
                 // OleDbConnection myConnection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=c:\\users\\anshi\\documents\\mdtaccessdb.accdb");
                 OleDbConnection myConnection = new OleDbConnection();
 
                 myConnection.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
                 myConnection.Open();
+                OleDbCommand cmd = new OleDbCommand();
 
-            //var datT = myConnection.GetSchema("user");
-            OleDbCommand cmd = new OleDbCommand("Select * FROM [Patient] where FirstName = '" + filterBy + "' OR LastName= '" + filterBy + "' OR NhsNo= '" + filterBy + "' OR HospitalNo= '" + filterBy + "'", myConnection);
+            if (filterBy.Contains(" "))
+                {
+                    string[] arrfilter = filterBy.Split(' ');
+                    cmd = new OleDbCommand("Select * FROM [Patient] where FirstName = '" + arrfilter[1] + "' and LastName= '" + arrfilter[0] + "'", myConnection);
+                }
+            else
+             cmd = new OleDbCommand("Select * FROM [Patient] where FirstName = '" + filterBy + "' OR LastName= '" + filterBy + "' OR NhsNo= '" + filterBy + "' OR HospitalNo= '" + filterBy + "'", myConnection);
             OleDbDataAdapter adapter;
             adapter = new OleDbDataAdapter(cmd);
 
