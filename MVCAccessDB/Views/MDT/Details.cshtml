@@ -55,130 +55,139 @@
                 </div>
             </div>
         </div>
-       
+
         <h3 style="color:#003366">Episode @Model.MDTDate.ToShortDateString()</h3>
-           
-            <div>
-                <ul class="nav nav-tabs">
-                    <li class="active">
-                        <a href="#tab_1" data-toggle="tab">Tab Header 1</a>
-                    </li>
-                    <li>
-                        <a href="#tab_2" data-toggle="tab">Tab Header 2</a>
-                    </li>
-                    <li>
-                        <a href="#tab_3" data-toggle="tab">Tab Header 3</a>
-                    </li>
-                    <li>
-                        <a href="#tab_4" data-toggle="tab">Attendees  @Model.MDTDate.ToShortDateString()</a>
-                    </li>
-                </ul>
-                <div class="form-horizontal"  style="padding-top:20px">
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="tab_1">
-                            @Html.HiddenFor(model => model.MDTPatientId, Model.Patient.PatientId)
-                            @*<hr />*@
-                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.MDTDate, htmlAttributes: new { @class = "control-label col-md-2" })
-                                <div class="col-md-10">
-                                    @Html.EditorFor(model => model.MDTDate , new { htmlAttributes = new { @class = "datepicker", @Value = Model.MDTDate.ToString("dd/MM/yyyy") } })
-                                    @Html.ValidationMessageFor(model => model.MDTDate, "", new { @class = "text-danger" })
-                                </div>
+        @using (Html.BeginForm("Details", "MDT", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div>
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a href="#tab_1" data-toggle="tab">Tab Header 1</a>
+                </li>
+                <li>
+                    <a href="#tab_2" data-toggle="tab">Tab Header 2</a>
+                </li>
+                <li>
+                    <a href="#tab_3" data-toggle="tab">Tab Header 3</a>
+                </li>
+                <li>
+                    <a href="#tab_4" data-toggle="tab">Attendees  @Model.MDTDate.ToShortDateString()</a>
+                </li>
+            </ul>
+            <div class="form-horizontal" style="padding-top:20px">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab_1">
+                        @Html.HiddenFor(model => model.MDTPatientId, Model.Patient.PatientId)
+                        @Html.HiddenFor(model => model.MdtId)
+                        @*<hr />*@
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MDTDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @*@Html.EditorFor(model => model.MDTDate, new { htmlAttributes = new { @class = "datepicker", @Value = Model.MDTDate.ToString("dd/MM/yyyy") } })*@
+                                @Html.EditorFor(model => model.MDTDate, new { htmlAttributes = new { @class = "datepicker" } })
+                                @Html.ValidationMessageFor(model => model.MDTDate, "", new { @class = "text-danger" })
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="tab_2">
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.History, htmlAttributes: new { @class = "control-label col-md-2" })
-                                <div class="col-md-10">
-                                    @Html.EditorFor(model => model.History, new { htmlAttributes = new { @class = "form-control" } })
-                                    @Html.ValidationMessageFor(model => model.History, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.Comorbidities, htmlAttributes: new { @class = "control-label col-md-2" })
-                                <div class="col-md-10">
-                                    @Html.EditorFor(model => model.Comorbidities, new { htmlAttributes = new { @class = "form-control" } })
-                                    @Html.ValidationMessageFor(model => model.Comorbidities, "", new { @class = "text-danger" })
-                                </div>
+                    </div>
+                    <div class="tab-pane fade" id="tab_2">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.History, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.History, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.History, "", new { @class = "text-danger" })
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="tab_3">
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.MDTDiscussion, htmlAttributes: new { @class = "control-label col-md-2" })
-                                <div class="col-md-10">
-                                    @Html.EditorFor(model => model.MDTDiscussion, new { htmlAttributes = new { @class = "form-control" } })
-                                    @Html.ValidationMessageFor(model => model.MDTDiscussion, "", new { @class = "text-danger" })
-                                </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Comorbidities, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Comorbidities, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Comorbidities, "", new { @class = "text-danger" })
                             </div>
-
-
                         </div>
-                        <div class="tab-pane fade" id="tab_4">
-
-                            <div class="form-group">
-                                <div class="col-md-offset-2 col-md-10">
-                                    @for (var i = 0; i < Model.Users.Count(); i++)
-                                    {
-                                        <div>
-                                            @Html.HiddenFor(model => model.Users[i].UserId)
-                                            @Html.HiddenFor(model => model.Users[i].FullName)
-                                            @Html.CheckBoxFor(model => model.Users[i].Selected)
-                                            @Html.LabelFor(model => model.Users[i].Selected, Model.Users[i].FullName)
-                                        </div>
-                                    }
-                                </div>
-                               
+                    </div>
+                    <div class="tab-pane fade" id="tab_3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MDTDiscussion, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.MDTDiscussion, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.MDTDiscussion, "", new { @class = "text-danger" })
                             </div>
                         </div>
 
+
+                    </div>
+                    <div class="tab-pane fade" id="tab_4">
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                @for (var i = 0; i < Model.Users.Count(); i++)
+                            {
+                                <div>
+                                    @Html.HiddenFor(model => model.Users[i].UserId)
+                                    @Html.HiddenFor(model => model.Users[i].FullName)
+                                    @Html.CheckBoxFor(model => model.Users[i].Selected)
+                                    @Html.LabelFor(model => model.Users[i].Selected, Model.Users[i].FullName)
+                                </div>
+                        }
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Update" class="btn btn-default" />
+                        </div>
                     </div>
                 </div>
             </div>
-            @*<div class="form-horizontal">
+        </div>
+        @*<div class="form-horizontal">
 
-                    @Html.HiddenFor(model => model.MDTPatientId, Model.Patient.PatientId)
-                    <hr />
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.MDTDate, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
+            @Html.HiddenFor(model => model.MDTPatientId, Model.Patient.PatientId)
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.MDTDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
 
-                            @Html.EditorFor(model => model.MDTDate, new { htmlAttributes = new { @class = "date-picker" } })
-                            @Html.ValidationMessageFor(model => model.MDTDate, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
+                    @Html.EditorFor(model => model.MDTDate, new { htmlAttributes = new { @class = "date-picker" } })
+                    @Html.ValidationMessageFor(model => model.MDTDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
 
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.History, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(model => model.History, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.History, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Comorbidities, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(model => model.Comorbidities, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Comorbidities, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.MDTDiscussion, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(model => model.MDTDiscussion, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.MDTDiscussion, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.History, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.History, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.History, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Comorbidities, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Comorbidities, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Comorbidities, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.MDTDiscussion, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.MDTDiscussion, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.MDTDiscussion, "", new { @class = "text-danger" })
+                </div>
+            </div>
 
 
-                    <div class="form-group">
-                        <div class="col-md-offset-2 col-md-10">
-                            <input type="submit" value="Create" class="btn btn-default" />
-                        </div>
-                    </div>
-                </div>*@
-       
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            </div>
+        </div>*@
+}
+
     </div>
 </div>
 
@@ -274,4 +283,13 @@
     <div class="col-md-6"><div class="col-md-6"><b>Comorbidities: </b></div><div class="col-md-6">@Model.Comorbidities</div></div>
     <div class="col-md-6"><div class="col-md-6"><b>Other: </b></div><div class="col-md-6"></div></div>
 </div>*@
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(function () {
+            // This will make every element with the class "date-picker" into a DatePicker element
+            $("#MDTDate").datepicker();
+        })
+    });
+</script>
             

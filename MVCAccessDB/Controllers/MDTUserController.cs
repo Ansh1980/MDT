@@ -19,7 +19,7 @@ namespace MVCAccessDB.Controllers
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null )
+                if (myCookie == null || myCookie["userid"] == null )
                     return RedirectToAction("index", "Home");
 
                 IList<PatientModel> patients = new List<PatientModel>();
@@ -75,7 +75,7 @@ namespace MVCAccessDB.Controllers
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null )
+                if (myCookie == null || myCookie["userid"] == null )
                     return RedirectToAction("index", "Home");
           
             MDTModel model = new MDTModel();
@@ -184,7 +184,7 @@ namespace MVCAccessDB.Controllers
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null )
+                if (myCookie == null || myCookie["userid"] == null )
                     return RedirectToAction("index", "Home");
                 MDTModel model = new MDTModel();
             if (id != null && id > 0)

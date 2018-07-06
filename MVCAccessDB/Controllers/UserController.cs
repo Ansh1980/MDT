@@ -20,7 +20,7 @@ namespace MVCAccessDB.Controllers
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
 
                 OleDbConnection myConnection = new OleDbConnection();
@@ -78,7 +78,7 @@ namespace MVCAccessDB.Controllers
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
 
                 OleDbConnection conn = new OleDbConnection();
@@ -131,7 +131,7 @@ namespace MVCAccessDB.Controllers
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
 
                 UserModel model = new UserModel();
@@ -189,7 +189,7 @@ namespace MVCAccessDB.Controllers
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
                 OleDbConnection conn = new OleDbConnection();
 

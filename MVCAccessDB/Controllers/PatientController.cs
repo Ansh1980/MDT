@@ -19,7 +19,7 @@ namespace MVCAccessDB.Controllers
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
                
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
 
                 IList<PatientModel> patients = new List<PatientModel>();
@@ -73,7 +73,7 @@ namespace MVCAccessDB.Controllers
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
 
                 MDTModel model = new MDTModel();
@@ -194,7 +194,7 @@ namespace MVCAccessDB.Controllers
             try {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
 
                 PatientModel model = new PatientModel();
@@ -215,7 +215,7 @@ namespace MVCAccessDB.Controllers
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
                 OleDbConnection conn = new OleDbConnection();
 
@@ -292,7 +292,7 @@ namespace MVCAccessDB.Controllers
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
 
                 PatientModel model = new PatientModel();
@@ -357,7 +357,7 @@ namespace MVCAccessDB.Controllers
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
                 OleDbConnection conn = new OleDbConnection();
 
@@ -434,7 +434,7 @@ namespace MVCAccessDB.Controllers
         {
             HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-            if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+            if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                 return RedirectToAction("index", "Home");
             return View();
         }
@@ -447,7 +447,7 @@ namespace MVCAccessDB.Controllers
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
                 // TODO: Add delete logic here
 
@@ -465,7 +465,7 @@ namespace MVCAccessDB.Controllers
             try {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
 
                 var filterBy = formCollection.Get("txtFilter");

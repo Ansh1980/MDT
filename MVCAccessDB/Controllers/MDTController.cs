@@ -24,7 +24,7 @@ namespace MVCAccessDB.Controllers
             try {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
 
                 MDTModel model = new MDTModel();
@@ -119,7 +119,7 @@ namespace MVCAccessDB.Controllers
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
 
                 OleDbConnection conn = new OleDbConnection();
@@ -228,13 +228,13 @@ namespace MVCAccessDB.Controllers
             //}
         }
 
-        public ActionResult Details(int? id = 0) //MDT Id
+        public ActionResult Details(int? id = 0 , string type = null) //MDT Id
         {
             try
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
 
                 MDTModel model = new MDTModel();
@@ -245,8 +245,13 @@ namespace MVCAccessDB.Controllers
                     myConnection.ConnectionString = ConfigurationManager.AppSettings["ConnectionString"];
 
                     myConnection.Open();
+                    OleDbCommand cmd = new OleDbCommand();
+                    if (type == null)
+                     cmd = new OleDbCommand("Select * FROM [MDT] where MDTId = " + id, myConnection); 
+                    else
+                      cmd = new OleDbCommand("Select * FROM [MDT] where MDTPatientId = " + id + " order by MDTDate Desc", myConnection); 
 
-                    OleDbCommand cmd = new OleDbCommand("Select * FROM [MDT] where MDTId = " + id, myConnection);
+
                     //OleDbCommand cmd = new OleDbCommand("Select MDT.* , User.FirstName, User.Lastname FROM [MDT] inner join MDTUser on MDTUser.MDTId = MDT.MDTId inner join USER" +
                     //    " on user.UserId = MDTUser.UserId" +
                     //    " where MDT.MDTId = " + id, myConnection);
@@ -270,7 +275,7 @@ namespace MVCAccessDB.Controllers
                             // users.Add(new UserModel
                         }
                     }
-
+                
                     cmd = new OleDbCommand("Select * FROM [Patient] where PatientId = " + model.MDTPatientId, myConnection);
 
                     adapter = new OleDbDataAdapter(cmd);
@@ -347,7 +352,7 @@ namespace MVCAccessDB.Controllers
             try { 
             HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-            if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+            if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                 return RedirectToAction("index", "Home");
 
             MDTModel model = new MDTModel();
@@ -457,7 +462,7 @@ namespace MVCAccessDB.Controllers
         {
             HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-            if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+            if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                 return RedirectToAction("index", "Home");
             return View();
         }
@@ -469,7 +474,7 @@ namespace MVCAccessDB.Controllers
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
 
                 MDTModel model = new MDTModel();
@@ -521,13 +526,13 @@ namespace MVCAccessDB.Controllers
 
         // POST: PatientInformation/Edit/5
         [HttpPost]
-        public ActionResult Edit(MDTModel model)
+        public ActionResult Details(MDTModel model)
         {
             try
             {
                 HttpCookie myCookie = Request.Cookies["MDTuserCookie"];
 
-                if (myCookie["userid"] == null || myCookie["isadmin"] != "True")
+                if (myCookie == null || myCookie["userid"] == null || myCookie["isadmin"] != "True")
                     return RedirectToAction("index", "Home");
                 OleDbConnection conn = new OleDbConnection();
 
@@ -554,6 +559,7 @@ namespace MVCAccessDB.Controllers
                     cmd.Parameters.Add("@History", OleDbType.VarChar).Value = model.History;
                     cmd.Parameters.Add("@MDTDate", OleDbType.Date).Value = model.MDTDate;
                     cmd.Parameters.Add("@MDTDiscussion", OleDbType.VarChar).Value = model.MDTDiscussion;
+                    cmd.Parameters.Add("@MDTId", OleDbType.Integer).Value = model.MdtId;
 
 
                     try
@@ -574,7 +580,7 @@ namespace MVCAccessDB.Controllers
                 }
 
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Index" , "Patient");
             }
             catch (Exception ex)
             {
